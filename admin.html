@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Undangan Rizky & Isla</title>
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'royal': {
+                            50: '#eef2ff',
+                            100: '#dce4ff',
+                            200: '#b9c9ff',
+                            300: '#8ba6ff',
+                            400: '#5b7bff',
+                            500: '#1e3a8a',
+                            600: '#1a3278',
+                            700: '#152a66',
+                            800: '#102254',
+                            900: '#0b1a42',
+                        },
+                        'gold': {
+                            50: '#fefce8',
+                            100: '#fef9c3',
+                            200: '#fef08a',
+                            300: '#fde047',
+                            400: '#d4a843',
+                            500: '#c9952e',
+                            600: '#b8860b',
+                            700: '#a67c00',
+                        },
+                    },
+                    fontFamily: {
+                        'display': ['Playfair Display', 'serif'],
+                        'script': ['Great Vibes', 'cursive'],
+                        'body': ['Cormorant Garamond', 'serif'],
+                        'sans': ['Outfit', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <style>
+        * { scrollbar-width: thin; scrollbar-color: rgba(30,58,138,0.2) transparent; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(30,58,138,0.2); border-radius: 3px; }
+        
+        .stat-card { transition: all 0.3s ease; }
+        .stat-card:hover { transform: translateY(-4px); }
+        
+        .tab-btn.active { 
+            background: linear-gradient(135deg, #1e3a8a, #152a66);
+            color: white;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-in { animation: slideIn 0.3s ease-out; }
+
+        .data-row { transition: all 0.2s ease; }
+        .data-row:hover { background: rgba(238, 242, 255, 0.5); }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans min-h-screen">
+
+    <!-- ==================== LOGIN SCREEN ==================== -->
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-royal-900 via-royal-800 to-royal-700">
+        <div class="bg-white rounded-3xl p-10 shadow-2xl max-w-md w-full mx-4">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-royal-500 to-royal-700 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <i data-lucide="shield-check" class="w-10 h-10 text-white"></i>
+                </div>
+                <h1 class="font-display text-2xl font-bold text-royal-800">Admin Panel</h1>
+                <p class="font-sans text-sm text-gray-500 mt-1">Undangan Rizky & Isla</p>
+            </div>
+            <form onsubmit="login(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-royal-700 mb-2">Username</label>
+                        <div class="relative">
+                            <i data-lucide="user" class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2"></i>
+                            <input type="text" id="login-username" class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-royal-500 focus:ring-2 focus:ring-royal-200 outline-none transition-all" placeholder="Masukkan username" value="admin">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-royal-700 mb-2">Password</label>
+                        <div class="relative">
+                            <i data-lucide="lock" class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2"></i>
+                            <input type="password" id="login-password" class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-royal-500 focus:ring-2 focus:ring-royal-200 outline-none transition-all" placeholder="Masukkan password">
+                        </div>
+                    </div>
+                    <p id="login-error" class="text-red-500 text-sm hidden">Username atau password salah!</p>
+                    <button type="submit" class="w-full py-3 bg-gradient-to-r from-royal-500 to-royal-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-royal-500/30 transition-all duration-300 flex items-center justify-center gap-2">
+                        <i data-lucide="log-in" class="w-5 h-5"></i>
+                        Masuk
+                    </button>
+                </div>
+            </form>
+            <p class="text-center text-xs text-gray-400 mt-6">Default: admin / admin123</p>
+        </div>
+    </div>
+
+    <!-- ==================== MAIN DASHBOARD ==================== -->
+    <div id="dashboard" class="hidden">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed left-0 top-0 bottom-0 w-72 bg-gradient-to-b from-royal-900 to-royal-800 text-white z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
+            <div class="p-6 border-b border-white/10">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center shadow-lg">
+                        <i data-lucide="heart" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-lg font-bold">Admin Panel</h2>
+                        <p class="text-xs text-white/50">Rizky & Isla</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="p-4 space-y-1">
+                <button onclick="showTab('overview')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all text-left" data-tab="overview">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button onclick="showTab('wishes')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all text-left" data-tab="wishes">
+                    <i data-lucide="message-square" class="w-5 h-5"></i>
+                    <span>Ucapan</span>
+                </button>
+                <button onclick="showTab('rsvp')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all text-left" data-tab="rsvp">
+                    <i data-lucide="user-check" class="w-5 h-5"></i>
+                    <span>RSVP</span>
+                </button>
+                <button onclick="showTab('gifts')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all text-left" data-tab="gifts">
+                    <i data-lucide="gift" class="w-5 h-5"></i>
+                    <span>Amplop Digital</span>
+                </button>
+                <button onclick="showTab('messages')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all text-left" data-tab="messages">
+                    <i data-lucide="mail" class="w-5 h-5"></i>
+                    <span>Riwayat Pesan</span>
+                </button>
+                <button onclick="showTab('generator')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all text-left" data-tab="generator">
+                    <i data-lucide="link" class="w-5 h-5"></i>
+                    <span>Link Generator</span>
+                </button>
+                <button onclick="showTab('settings')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all text-left" data-tab="settings">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span>Pengaturan</span>
+                </button>
+            </nav>
+            
+            <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
+                <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-300 hover:text-red-200 hover:bg-red-500/10 transition-all text-left">
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
+                    <span>Keluar</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <div class="lg:ml-72 min-h-screen">
+            <!-- Top Bar -->
+            <header class="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky top-0 z-30">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="lg:hidden w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                        <i data-lucide="menu" class="w-5 h-5 text-gray-600"></i>
+                    </button>
+                    <div>
+                        <h1 id="page-title" class="font-display text-xl font-bold text-royal-800">Dashboard</h1>
+                        <p class="text-xs text-gray-500">Panel Administrasi Undangan</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="index.html" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-royal-100 text-royal-700 rounded-xl hover:bg-royal-200 transition-colors text-sm font-medium">
+                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                        Lihat Undangan
+                    </a>
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-royal-500 to-royal-700 flex items-center justify-center text-white font-bold text-sm">
+                        A
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Content Area -->
+            <div class="p-6">
+                <!-- ==================== OVERVIEW TAB ==================== -->
+                <div id="tab-overview" class="tab-content">
+                    <!-- Stats -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="stat-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+                                    <i data-lucide="message-square" class="w-6 h-6 text-blue-600"></i>
+                                </div>
+                                <span class="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded-full">Live</span>
+                            </div>
+                            <h3 id="stat-wishes" class="text-3xl font-bold text-gray-800">0</h3>
+                            <p class="text-sm text-gray-500 mt-1">Total Ucapan</p>
+                        </div>
+                        
+                        <div class="stat-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
+                                    <i data-lucide="user-check" class="w-6 h-6 text-green-600"></i>
+                                </div>
+                                <span class="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full" id="stat-attend-pct">0%</span>
+                            </div>
+                            <h3 id="stat-rsvp" class="text-3xl font-bold text-gray-800">0</h3>
+                            <p class="text-sm text-gray-500 mt-1">Total RSVP</p>
+                        </div>
+                        
+                        <div class="stat-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center">
+                                    <i data-lucide="gift" class="w-6 h-6 text-amber-600"></i>
+                                </div>
+                            </div>
+                            <h3 id="stat-gifts" class="text-3xl font-bold text-gray-800">0</h3>
+                            <p class="text-sm text-gray-500 mt-1">Amplop Digital</p>
+                        </div>
+                        
+                        <div class="stat-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
+                                    <i data-lucide="users" class="w-6 h-6 text-purple-600"></i>
+                                </div>
+                            </div>
+                            <h3 id="stat-guests" class="text-3xl font-bold text-gray-800">0</h3>
+                            <p class="text-sm text-gray-500 mt-1">Estimasi Tamu</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent activity -->
+                    <div class="grid lg:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                            <h3 class="font-display text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                <i data-lucide="message-square" class="w-5 h-5 text-royal-500"></i>
+                                Ucapan Terbaru
+                            </h3>
+                            <div id="recent-wishes" class="space-y-3 max-h-80 overflow-y-auto pr-2">
+                                <p class="text-gray-400 text-sm text-center py-8">Belum ada ucapan</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                            <h3 class="font-display text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                <i data-lucide="user-check" class="w-5 h-5 text-green-500"></i>
+                                RSVP Terbaru
+                            </h3>
+                            <div id="recent-rsvps" class="space-y-3 max-h-80 overflow-y-auto pr-2">
+                                <p class="text-gray-400 text-sm text-center py-8">Belum ada RSVP</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== WISHES TAB ==================== -->
+                <div id="tab-wishes" class="tab-content hidden">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                            <div>
+                                <h3 class="font-display text-lg font-bold text-gray-800">Semua Ucapan</h3>
+                                <p class="text-xs text-gray-500 mt-0.5">Daftar ucapan dan doa dari para tamu undangan</p>
+                            </div>
+                            <div class="flex items-center gap-2.5">
+                                <div class="relative">
+                                    <input type="text" id="wishes-search" oninput="renderWishesTable()" placeholder="Cari nama atau ucapan..." class="pl-9 pr-3.5 py-2 rounded-xl border border-gray-200 text-xs text-gray-800 bg-gray-50 focus:bg-white focus:border-royal-500 focus:ring-2 focus:ring-royal-200 outline-none w-52 sm:w-64 transition-all">
+                                    <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                                </div>
+                                <button onclick="exportData('wishes')" class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors text-xs font-semibold flex-shrink-0">
+                                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                    Export
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="border-b border-gray-100">
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">#</th>
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama</th>
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ucapan</th>
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Waktu</th>
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="wishes-table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="wishes-empty" class="text-center py-10 text-gray-400 hidden">
+                            <i data-lucide="message-circle" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                            <p>Belum ada ucapan</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== RSVP TAB ==================== -->
+                <div id="tab-rsvp" class="tab-content hidden">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                            <div>
+                                <h3 class="font-display text-lg font-bold text-gray-800">Daftar RSVP</h3>
+                                <p class="text-xs text-gray-500 mt-0.5">Konfirmasi kehadiran para tamu undangan</p>
+                            </div>
+                            <div class="flex items-center gap-2.5">
+                                <div class="relative">
+                                    <input type="text" id="rsvp-search" oninput="renderRSVPTable()" placeholder="Cari nama tamu..." class="pl-9 pr-3.5 py-2 rounded-xl border border-gray-200 text-xs text-gray-800 bg-gray-50 focus:bg-white focus:border-royal-500 focus:ring-2 focus:ring-royal-200 outline-none w-52 sm:w-64 transition-all">
+                                    <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                                </div>
+                                <button onclick="exportData('rsvp')" class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors text-xs font-semibold flex-shrink-0">
+                                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                    Export
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- RSVP Summary -->
+                        <div class="grid grid-cols-3 gap-4 mb-6">
+                            <div class="bg-green-50 rounded-xl p-4 text-center border border-green-100">
+                                <p class="text-2xl font-bold text-green-700" id="rsvp-hadir">0</p>
+                                <p class="text-sm text-green-600">Hadir</p>
+                            </div>
+                            <div class="bg-red-50 rounded-xl p-4 text-center border border-red-100">
+                                <p class="text-2xl font-bold text-red-700" id="rsvp-tidak">0</p>
+                                <p class="text-sm text-red-600">Tidak Hadir</p>
+                            </div>
+                            <div class="bg-blue-50 rounded-xl p-4 text-center border border-blue-100">
+                                <p class="text-2xl font-bold text-blue-700" id="rsvp-total-tamu">0</p>
+                                <p class="text-sm text-blue-600">Total Tamu</p>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="border-b border-gray-100">
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">#</th>
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama</th>
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Jumlah</th>
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Waktu</th>
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rsvp-table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="rsvp-empty" class="text-center py-10 text-gray-400 hidden">
+                            <i data-lucide="user-check" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                            <p>Belum ada RSVP</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== GIFTS TAB ==================== -->
+                <div id="tab-gifts" class="tab-content hidden">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="font-display text-lg font-bold text-gray-800">Amplop Digital</h3>
+                            <button onclick="exportData('gifts')" class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors text-sm font-medium">
+                                <i data-lucide="download" class="w-4 h-4"></i>
+                                Export
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="border-b border-gray-100">
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">#</th>
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Pengirim</th>
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Metode</th>
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Nominal/Deskripsi</th>
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Waktu</th>
+                                        <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gifts-table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="gifts-empty" class="text-center py-10 text-gray-400 hidden">
+                            <i data-lucide="gift" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                            <p>Belum ada hadiah</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== MESSAGES TAB ==================== -->
+                <div id="tab-messages" class="tab-content hidden">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="font-display text-lg font-bold text-gray-800">Riwayat Semua Pesan</h3>
+                            <div class="flex items-center gap-2">
+                                <select id="message-filter" onchange="renderMessages()" class="px-3 py-2 rounded-xl border border-gray-200 text-sm focus:border-royal-500 focus:ring-2 focus:ring-royal-200 outline-none">
+                                    <option value="all">Semua</option>
+                                    <option value="wish">Ucapan</option>
+                                    <option value="rsvp">RSVP</option>
+                                    <option value="gift">Hadiah</option>
+                                </select>
+                                <button onclick="exportData('messages')" class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors text-sm font-medium">
+                                    <i data-lucide="download" class="w-4 h-4"></i>
+                                    Export
+                                </button>
+                            </div>
+                        </div>
+                        <div id="messages-list" class="space-y-3 max-h-[600px] overflow-y-auto pr-2">
+                        </div>
+                        <div id="messages-empty" class="text-center py-10 text-gray-400 hidden">
+                            <i data-lucide="mail" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                            <p>Belum ada pesan</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== LINK GENERATOR TAB ==================== -->
+                <div id="tab-generator" class="tab-content hidden">
+
+                    <!-- Header Banner -->
+                    <div class="bg-gradient-to-br from-royal-900 via-royal-800 to-royal-950 rounded-2xl p-6 text-white shadow-md border border-royal-700/50 mb-6 relative overflow-hidden">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+                            <div>
+                                <h3 class="font-display text-xl font-bold text-white">Generator Link Undangan Tamu</h3>
+                                <p class="text-xs text-royal-200 mt-1 max-w-xl">Ketik nama tamu undangan. Link khusus berparameter <code class="bg-black/40 px-2 py-0.5 rounded text-gold-300 font-mono">?to=Nama+Tamu</code> serta draf WhatsApp siap kirim akan dibuat secara otomatis.</p>
+                            </div>
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                                <button onclick="toggleSettings()" class="px-3 py-2 bg-white/10 hover:bg-white/20 text-gold-300 rounded-xl text-xs font-semibold transition-all border border-white/10 flex items-center gap-1.5">
+                                    <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+                                    <span>URL Undangan</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- URL Settings Box (Hidden by default) -->
+                    <div id="settings-box" class="hidden bg-white rounded-2xl p-5 shadow-sm border border-gray-200 mb-6 transition-all">
+                        <h4 class="font-sans font-bold text-sm text-royal-900 mb-1 flex items-center gap-2">
+                            <i data-lucide="globe" class="w-4 h-4 text-royal-600"></i>
+                            Domain / URL Dasar Undangan
+                        </h4>
+                        <p class="text-xs text-gray-500 mb-3">Sesuaikan jika Anda telah mengunggah website ke domain sendiri (contoh: <code class="bg-gray-100 px-1 py-0.5 rounded text-gray-800">https://undangan.isla.id</code>).</p>
+                        <div class="flex gap-2">
+                            <input type="text" id="base-url-input" class="flex-1 px-4 py-2 rounded-xl border border-gray-200 focus:border-royal-500 outline-none text-xs font-mono text-gray-800 bg-gray-50">
+                            <button onclick="saveBaseUrl()" class="px-4 py-2 bg-royal-700 hover:bg-royal-800 text-white rounded-xl text-xs font-bold transition-all">Simpan</button>
+                            <button onclick="resetBaseUrl()" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-medium transition-all">Reset</button>
+                        </div>
+                    </div>
+
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left Column: Generator Form (Input Nama Tamu) -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <div class="bg-white rounded-3xl p-6 shadow-xl border border-royal-100">
+                    <form onsubmit="handleSingleSubmit(event)">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block font-sans text-xs font-bold uppercase tracking-wider text-royal-800 mb-1.5">
+                                    Nama Lengkap Tamu
+                                </label>
+                                <input type="text" id="guest-name-input" required class="w-full px-4 py-3 rounded-xl border border-royal-200 focus:border-royal-500 focus:ring-2 focus:ring-royal-200 outline-none text-sm text-royal-900 bg-royal-50/30 transition-all" placeholder="Contoh: Bpk. Bambang & Keluarga">
+                                <p class="font-sans text-[11px] text-royal-500 mt-1">Bisa nama perorangan, gelar, keluarga besar, atau pasangan.</p>
+                            </div>
+
+                            <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-royal-800 via-royal-700 to-royal-800 text-gold-300 font-sans font-bold text-sm rounded-xl shadow-lg shadow-royal-900/20 hover:shadow-xl transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 border border-gold-400/40">
+                                <i data-lucide="sparkles" class="w-4 h-4 text-gold-400"></i>
+                                <span>Buat Link & Teks WhatsApp</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Hasil Link & Daftar Tamu -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- Hasil Link Tamu Terbaru (Spotlight Result) -->
+                <div id="latest-result-card" class="hidden bg-gradient-to-br from-royal-950 via-royal-900 to-royal-950 rounded-3xl p-6 text-white shadow-2xl border-2 border-gold-400/50 relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full font-sans text-xs font-bold border border-emerald-400/30 flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Link Berhasil Dibuat!
+                        </span>
+                        <span id="latest-guest-name-badge" class="font-sans text-xs font-bold text-gold-300"></span>
+                    </div>
+
+                    <!-- URL Box -->
+                    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 mb-4">
+                        <p class="font-sans text-[11px] text-royal-200 uppercase tracking-widest font-semibold mb-1">Link Undangan Khusus:</p>
+                        <p id="latest-url-text" class="font-mono text-xs sm:text-sm text-gold-300 font-bold break-all select-all"></p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <button onclick="copyLatestLink(this)" class="py-2.5 px-3 bg-white text-royal-950 hover:bg-gold-50 font-sans text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                            <span>Salin Link</span>
+                        </button>
+                        
+                        <button onclick="copyLatestWaMessage(this)" class="py-2.5 px-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-sans text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-md">
+                            <i data-lucide="message-circle" class="w-4 h-4"></i>
+                            <span>Salin Teks WA</span>
+                        </button>
+                        
+                        <a id="latest-wa-link" href="#" target="_blank" class="py-2.5 px-3 bg-emerald-500 hover:bg-emerald-400 text-white font-sans text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-md">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            <span>Buka WhatsApp</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Riwayat & Daftar Tamu yang Telah Dibuat -->
+                <div class="bg-white rounded-3xl p-6 shadow-xl border border-royal-100">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-royal-100">
+                        <div>
+                            <h3 class="font-display text-lg font-bold text-royal-950 flex items-center gap-2">
+                                <i data-lucide="list" class="w-5 h-5 text-royal-600"></i>
+                                Daftar Tamu Tersimpan
+                            </h3>
+                            <p class="font-sans text-xs text-royal-600 mt-0.5">
+                                Total <span id="total-guest-count" class="font-bold text-royal-950">0</span> tamu undangan
+                            </p>
+                        </div>
+                        
+                        <!-- Search & Bulk Export Actions -->
+                        <div class="flex items-center gap-2">
+                            <div class="relative">
+                                <input type="text" id="search-input" oninput="renderGuestList()" placeholder="Cari nama tamu..." class="pl-8 pr-3 py-1.5 rounded-xl border border-royal-200 text-xs text-royal-900 bg-royal-50/30 focus:border-royal-500 outline-none w-36 sm:w-48">
+                                <i data-lucide="search" class="w-3.5 h-3.5 text-royal-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
+                            </div>
+                            <button onclick="exportToCsv()" title="Unduh CSV" class="p-2 rounded-xl bg-royal-50 hover:bg-royal-100 text-royal-700 transition-colors border border-royal-200">
+                                <i data-lucide="download" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="clearAllGuests()" title="Hapus Semua Tamu" class="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors border border-rose-200">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- List Container -->
+                    <div id="guest-list-container" class="space-y-3 max-h-[560px] overflow-y-auto pr-1">
+                        <!-- Rendered by JS -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="guest-empty-state" class="py-12 text-center text-royal-400">
+                        <i data-lucide="user-x" class="w-12 h-12 mx-auto mb-3 opacity-40"></i>
+                        <p class="font-sans text-sm font-semibold text-royal-700">Belum ada tamu yang dibuat</p>
+                        <p class="font-sans text-xs text-royal-400 mt-1">Masukkan nama tamu pada formulir di sebelah kiri untuk mulai menghasilkan link.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+                </div>
+
+                <!-- ==================== SETTINGS TAB ==================== -->
+                <div id="tab-settings" class="tab-content hidden">
+                    <div class="max-w-2xl space-y-6">
+                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                            <h3 class="font-display text-lg font-bold text-gray-800 mb-6">Pengaturan Admin</h3>
+                            <form onsubmit="updatePassword(event)">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Password Lama</label>
+                                        <input type="password" id="old-password" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-royal-500 focus:ring-2 focus:ring-royal-200 outline-none transition-all">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Password Baru</label>
+                                        <input type="password" id="new-password" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-royal-500 focus:ring-2 focus:ring-royal-200 outline-none transition-all">
+                                    </div>
+                                    <button type="submit" class="px-6 py-3 bg-gradient-to-r from-royal-500 to-royal-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all flex items-center gap-2">
+                                        <i data-lucide="save" class="w-5 h-5"></i>
+                                        Simpan Password
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                            <h3 class="font-display text-lg font-bold text-gray-800 mb-4">Data Management</h3>
+                            <p class="text-gray-500 text-sm mb-4">Perhatian: Tindakan ini tidak dapat dibatalkan.</p>
+                            <div class="flex flex-wrap gap-3">
+                                <button onclick="clearData('wishes')" class="px-4 py-2 bg-red-100 text-red-700 rounded-xl hover:bg-red-200 transition-colors text-sm font-medium flex items-center gap-2">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    Hapus Semua Ucapan
+                                </button>
+                                <button onclick="clearData('rsvps')" class="px-4 py-2 bg-red-100 text-red-700 rounded-xl hover:bg-red-200 transition-colors text-sm font-medium flex items-center gap-2">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    Hapus Semua RSVP
+                                </button>
+                                <button onclick="clearData('gifts')" class="px-4 py-2 bg-red-100 text-red-700 rounded-xl hover:bg-red-200 transition-colors text-sm font-medium flex items-center gap-2">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    Hapus Semua Hadiah
+                                </button>
+                                <button onclick="clearData('all')" class="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors text-sm font-medium flex items-center gap-2">
+                                    <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                                    Hapus Semua Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="confirm-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden items-center justify-center">
+        <div class="bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl">
+            <div class="text-center">
+                <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="alert-triangle" class="w-8 h-8 text-red-500"></i>
+                </div>
+                <h3 id="confirm-title" class="font-display text-xl font-bold text-gray-800 mb-2">Konfirmasi Hapus</h3>
+                <p id="confirm-message" class="text-gray-500 text-sm mb-6">Apakah Anda yakin?</p>
+                <div class="flex gap-3 justify-center">
+                    <button onclick="closeConfirmModal()" class="px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-colors">
+                        Batal
+                    </button>
+                    <button id="confirm-btn" class="px-6 py-3 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-colors">
+                        Hapus
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="admin-toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] bg-royal-800 text-white px-6 py-3 rounded-full shadow-2xl text-sm flex items-center gap-2 transition-all duration-500 translate-y-20 opacity-0 pointer-events-none">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+        <span id="admin-toast-message">Berhasil!</span>
+    </div>
+
+    <script>
+    // ==================== DATA STORE (Supabase Cloud Database & Offline Cache) ====================
+    const SUPABASE_URL = 'https://xkxcubwgljzkjaairidj.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_wH-uJCgIb7EUJfAJy6kmWQ_VnSFGtCF';
+
+    const DB = {
+        _wishes: null,
+        async fetchWishes() {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/wishes?select=*&order=created_at.desc`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    this._wishes = data.map(item => ({
+                        id: String(item.id),
+                        name: item.name,
+                        attendance: item.attendance || 'hadir',
+                        guests: item.guests || 1,
+                        message: item.message,
+                        timestamp: item.created_at
+                    }));
+                    localStorage.setItem('wedding_wishes', JSON.stringify(this._wishes));
+                    return this._wishes;
+                }
+            } catch (e) {
+                console.warn('Supabase offline, use localStorage', e);
+            }
+            return this.getWishes();
+        },
+        getWishes() {
+            if (this._wishes !== null) return this._wishes;
+            try {
+                this._wishes = JSON.parse(localStorage.getItem('wedding_wishes') || '[]');
+                return this._wishes;
+            } catch {
+                this._wishes = [];
+                return [];
+            }
+        },
+        getRSVPs() { return JSON.parse(localStorage.getItem('wedding_rsvps') || '[]'); },
+        getGifts() { return JSON.parse(localStorage.getItem('wedding_gifts') || '[]'); },
+        getMessages() { return JSON.parse(localStorage.getItem('wedding_messages') || '[]'); },
+        async deleteWish(id) {
+            const d = this.getWishes().filter(w => String(w.id) !== String(id));
+            this._wishes = d;
+            localStorage.setItem('wedding_wishes', JSON.stringify(d));
+            try {
+                await fetch(`${SUPABASE_URL}/rest/v1/wishes?id=eq.${encodeURIComponent(id)}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+            } catch (e) {
+                console.warn('Gagal delete wish di Supabase:', e);
+            }
+        },
+        deleteRSVP(id) {
+            const d = this.getRSVPs().filter(r => r.id !== id);
+            localStorage.setItem('wedding_rsvps', JSON.stringify(d));
+        },
+        deleteGift(id) {
+            const d = this.getGifts().filter(g => g.id !== id);
+            localStorage.setItem('wedding_gifts', JSON.stringify(d));
+        },
+    };
+
+    // ==================== AUTH ====================
+    const DEFAULT_USER = 'admin';
+    const DEFAULT_PASS = 'admin123';
+
+    function getCredentials() {
+        const stored = localStorage.getItem('admin_credentials');
+        if (stored) return JSON.parse(stored);
+        return { username: DEFAULT_USER, password: DEFAULT_PASS };
+    }
+
+    function login(e) {
+        e.preventDefault();
+        const username = document.getElementById('login-username').value;
+        const password = document.getElementById('login-password').value;
+        const creds = getCredentials();
+
+        if (username === creds.username && password === creds.password) {
+            sessionStorage.setItem('admin_logged_in', 'true');
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            initDashboard();
+        } else {
+            document.getElementById('login-error').classList.remove('hidden');
+            setTimeout(() => document.getElementById('login-error').classList.add('hidden'), 3000);
+        }
+    }
+
+    function logout() {
+        sessionStorage.removeItem('admin_logged_in');
+        location.reload();
+    }
+
+    function updatePassword(e) {
+        e.preventDefault();
+        const oldPass = document.getElementById('old-password').value;
+        const newPass = document.getElementById('new-password').value;
+        const creds = getCredentials();
+
+        if (oldPass !== creds.password) {
+            showAdminToast('Password lama salah!');
+            return;
+        }
+        if (newPass.length < 4) {
+            showAdminToast('Password minimal 4 karakter!');
+            return;
+        }
+
+        creds.password = newPass;
+        localStorage.setItem('admin_credentials', JSON.stringify(creds));
+        document.getElementById('old-password').value = '';
+        document.getElementById('new-password').value = '';
+        showAdminToast('Password berhasil diubah! ✅');
+    }
+
+    // ==================== INIT ====================
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+        
+        if (sessionStorage.getItem('admin_logged_in') === 'true') {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            initDashboard();
+        }
+    });
+
+    function initDashboard() {
+        showTab('overview');
+        DB.fetchWishes().then(() => {
+            updateStats();
+            renderWishesTable();
+        });
+        updateStats();
+        setInterval(() => {
+            DB.fetchWishes().then(() => updateStats());
+        }, 5000); // Auto refresh
+    }
+
+    // ==================== TABS ====================
+    function showTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        // Show selected
+        document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+        
+        // Update sidebar active state
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.classList.remove('bg-white/10', 'text-white');
+            if (link.dataset.tab === tabName) {
+                link.classList.add('bg-white/10', 'text-white');
+            }
+        });
+
+        // Update page title
+        const titles = {
+            overview: 'Dashboard',
+            wishes: 'Ucapan',
+            rsvp: 'RSVP',
+            gifts: 'Amplop Digital',
+            messages: 'Riwayat Pesan',
+            generator: 'Link Generator',
+            settings: 'Pengaturan',
+        };
+        document.getElementById('page-title').textContent = titles[tabName] || 'Dashboard';
+
+        // Render content
+        if (tabName === 'overview') {
+            DB.fetchWishes().then(() => updateStats());
+        }
+        if (tabName === 'wishes') {
+            DB.fetchWishes().then(() => renderWishesTable());
+        }
+        if (tabName === 'rsvp') renderRSVPTable();
+        if (tabName === 'gifts') renderGiftsTable();
+        if (tabName === 'messages') renderMessages();
+        if (tabName === 'generator') initGeneratorTab();
+
+        // Close mobile sidebar
+        document.getElementById('sidebar').classList.add('-translate-x-full');
+    }
+
+    // ==================== STATS ====================
+    function updateStats() {
+        const wishes = DB.getWishes();
+        const rsvps = DB.getRSVPs();
+        const gifts = DB.getGifts();
+        
+        document.getElementById('stat-wishes').textContent = wishes.length;
+        document.getElementById('stat-rsvp').textContent = rsvps.length;
+        document.getElementById('stat-gifts').textContent = gifts.length;
+        
+        const attending = rsvps.filter(r => r.attendance === 'hadir');
+        const totalGuests = attending.reduce((sum, r) => sum + (r.guests || 1), 0);
+        document.getElementById('stat-guests').textContent = totalGuests;
+        
+        const pct = rsvps.length > 0 ? Math.round((attending.length / rsvps.length) * 100) : 0;
+        document.getElementById('stat-attend-pct').textContent = pct + '%';
+
+        // Recent wishes
+        const recentWishesEl = document.getElementById('recent-wishes');
+        if (wishes.length > 0) {
+            recentWishesEl.innerHTML = wishes.slice(0, 5).map(w => `
+                <div class="data-row flex items-start gap-3 p-3 rounded-xl">
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-royal-400 to-royal-600 flex items-center justify-center flex-shrink-0 text-white font-bold text-xs">
+                        ${w.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="min-w-0">
+                        <p class="font-semibold text-sm text-gray-800 truncate">${escapeHtml(w.name)}</p>
+                        <p class="text-xs text-gray-500 line-clamp-2">${escapeHtml(w.message)}</p>
+                        <p class="text-xs text-gray-400 mt-1">${formatDate(w.timestamp)}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Recent RSVPs
+        const recentRSVPsEl = document.getElementById('recent-rsvps');
+        if (rsvps.length > 0) {
+            recentRSVPsEl.innerHTML = rsvps.slice(0, 5).map(r => `
+                <div class="data-row flex items-center gap-3 p-3 rounded-xl">
+                    <div class="w-9 h-9 rounded-full ${r.attendance === 'hadir' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'} flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="${r.attendance === 'hadir' ? 'check' : 'x'}" class="w-5 h-5"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="font-semibold text-sm text-gray-800">${escapeHtml(r.name)}</p>
+                        <p class="text-xs text-gray-500">${r.attendance === 'hadir' ? 'Hadir' : 'Tidak Hadir'} · ${r.guests || 1} orang</p>
+                    </div>
+                    <span class="text-xs text-gray-400">${formatDate(r.timestamp)}</span>
+                </div>
+            `).join('');
+        }
+
+        lucide.createIcons();
+    }
+
+    // ==================== RENDER TABLES ====================
+    function renderWishesTable() {
+        const wishes = DB.getWishes();
+        const tbody = document.getElementById('wishes-table-body');
+        const empty = document.getElementById('wishes-empty');
+        const searchInput = document.getElementById('wishes-search');
+        const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+
+        const filtered = query
+            ? wishes.filter(w => (w.name || '').toLowerCase().includes(query) || (w.message || '').toLowerCase().includes(query))
+            : wishes;
+        
+        if (filtered.length === 0) {
+            tbody.innerHTML = '';
+            empty.classList.remove('hidden');
+            if (query) {
+                empty.innerHTML = `
+                    <i data-lucide="search-x" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                    <p class="font-medium text-gray-600">Tidak ada ucapan yang cocok</p>
+                    <p class="text-xs text-gray-400 mt-1">Tidak ditemukan hasil untuk "${escapeHtml(query)}"</p>
+                `;
+            } else {
+                empty.innerHTML = `
+                    <i data-lucide="message-circle" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                    <p>Belum ada ucapan</p>
+                `;
+            }
+            if (window.lucide) lucide.createIcons();
+            return;
+        }
+        empty.classList.add('hidden');
+        
+        tbody.innerHTML = filtered.map((w, i) => `
+            <tr class="data-row border-b border-gray-50">
+                <td class="px-4 py-3 text-sm text-gray-500">${i + 1}</td>
+                <td class="px-4 py-3 text-sm font-medium text-gray-800">${escapeHtml(w.name)}</td>
+                <td class="px-4 py-3 text-sm text-gray-600 max-w-xs truncate">${escapeHtml(w.message)}</td>
+                <td class="px-4 py-3 text-xs text-gray-400">${formatDate(w.timestamp)}</td>
+                <td class="px-4 py-3">
+                    <button onclick="deleteItem('wish', '${w.id}')" class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Hapus Ucapan">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+        lucide.createIcons();
+    }
+
+    function renderRSVPTable() {
+        const rsvps = DB.getRSVPs();
+        const tbody = document.getElementById('rsvp-table-body');
+        const empty = document.getElementById('rsvp-empty');
+        
+        // Summary
+        const hadir = rsvps.filter(r => r.attendance === 'hadir');
+        const tidak = rsvps.filter(r => r.attendance !== 'hadir');
+        const totalTamu = hadir.reduce((s, r) => s + (r.guests || 1), 0);
+        document.getElementById('rsvp-hadir').textContent = hadir.length;
+        document.getElementById('rsvp-tidak').textContent = tidak.length;
+        document.getElementById('rsvp-total-tamu').textContent = totalTamu;
+        
+        const searchInput = document.getElementById('rsvp-search');
+        const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+
+        const filtered = query
+            ? rsvps.filter(r => (r.name || '').toLowerCase().includes(query))
+            : rsvps;
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = '';
+            empty.classList.remove('hidden');
+            if (query) {
+                empty.innerHTML = `
+                    <i data-lucide="search-x" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                    <p class="font-medium text-gray-600">Tidak ada tamu yang cocok</p>
+                    <p class="text-xs text-gray-400 mt-1">Tidak ditemukan hasil untuk "${escapeHtml(query)}"</p>
+                `;
+            } else {
+                empty.innerHTML = `
+                    <i data-lucide="user-check" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                    <p>Belum ada RSVP</p>
+                `;
+            }
+            if (window.lucide) lucide.createIcons();
+            return;
+        }
+        empty.classList.add('hidden');
+        
+        tbody.innerHTML = filtered.map((r, i) => `
+            <tr class="data-row border-b border-gray-50">
+                <td class="px-4 py-3 text-sm text-gray-500">${i + 1}</td>
+                <td class="px-4 py-3 text-sm font-medium text-gray-800">${escapeHtml(r.name)}</td>
+                <td class="px-4 py-3">
+                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${r.attendance === 'hadir' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                        ${r.attendance === 'hadir' ? '✓ Hadir' : '✗ Tidak'}
+                    </span>
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-600">${r.guests || 1} orang</td>
+                <td class="px-4 py-3 text-xs text-gray-400">${formatDate(r.timestamp)}</td>
+                <td class="px-4 py-3">
+                    <button onclick="deleteItem('rsvp', '${r.id}')" class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Hapus RSVP">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+        lucide.createIcons();
+    }
+
+    function renderGiftsTable() {
+        const gifts = DB.getGifts();
+        const tbody = document.getElementById('gifts-table-body');
+        const empty = document.getElementById('gifts-empty');
+        
+        if (gifts.length === 0) {
+            tbody.innerHTML = '';
+            empty.classList.remove('hidden');
+            return;
+        }
+        empty.classList.add('hidden');
+        
+        tbody.innerHTML = gifts.map((g, i) => `
+            <tr class="data-row border-b border-gray-50">
+                <td class="px-4 py-3 text-sm text-gray-500">${i + 1}</td>
+                <td class="px-4 py-3 text-sm font-medium text-gray-800">${escapeHtml(g.sender)}</td>
+                <td class="px-4 py-3 text-sm text-gray-600">${escapeHtml(g.bank)}</td>
+                <td class="px-4 py-3 text-sm text-gray-600">${escapeHtml(g.amount || '-')}</td>
+                <td class="px-4 py-3 text-xs text-gray-400">${formatDate(g.timestamp)}</td>
+                <td class="px-4 py-3">
+                    <button onclick="deleteItem('gift', '${g.id}')" class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+        lucide.createIcons();
+    }
+
+    function renderMessages() {
+        const filter = document.getElementById('message-filter').value;
+        let messages = DB.getMessages();
+        
+        if (filter !== 'all') {
+            messages = messages.filter(m => m.type === filter);
+        }
+        
+        const container = document.getElementById('messages-list');
+        const empty = document.getElementById('messages-empty');
+        
+        if (messages.length === 0) {
+            container.innerHTML = '';
+            empty.classList.remove('hidden');
+            return;
+        }
+        empty.classList.add('hidden');
+        
+        const typeIcons = { wish: 'message-square', rsvp: 'user-check', gift: 'gift' };
+        const typeColors = { wish: 'blue', rsvp: 'green', gift: 'amber' };
+        const typeLabels = { wish: 'Ucapan', rsvp: 'RSVP', gift: 'Hadiah' };
+        
+        container.innerHTML = messages.map(m => `
+            <div class="slide-in flex items-start gap-3 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                <div class="w-10 h-10 rounded-xl bg-${typeColors[m.type]}-100 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="${typeIcons[m.type]}" class="w-5 h-5 text-${typeColors[m.type]}-600"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="font-semibold text-sm text-gray-800">${escapeHtml(m.name)}</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-${typeColors[m.type]}-100 text-${typeColors[m.type]}-700">${typeLabels[m.type]}</span>
+                    </div>
+                    <p class="text-sm text-gray-600">${escapeHtml(m.content)}</p>
+                    <p class="text-xs text-gray-400 mt-1">${formatDate(m.timestamp)}</p>
+                </div>
+            </div>
+        `).join('');
+        lucide.createIcons();
+    }
+
+    // ==================== DELETE ====================
+    let pendingDelete = null;
+
+    function deleteItem(type, id) {
+        pendingDelete = { type, id };
+        document.getElementById('confirm-title').textContent = 'Konfirmasi Hapus';
+        document.getElementById('confirm-message').textContent = 'Apakah Anda yakin ingin menghapus item ini?';
+        document.getElementById('confirm-btn').onclick = confirmDelete;
+        const modal = document.getElementById('confirm-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function confirmDelete() {
+        if (!pendingDelete) return;
+        
+        if (pendingDelete.type === 'wish') DB.deleteWish(pendingDelete.id);
+        if (pendingDelete.type === 'rsvp') DB.deleteRSVP(pendingDelete.id);
+        if (pendingDelete.type === 'gift') DB.deleteGift(pendingDelete.id);
+        
+        closeConfirmModal();
+        
+        // Re-render
+        renderWishesTable();
+        renderRSVPTable();
+        renderGiftsTable();
+        updateStats();
+        
+        showAdminToast('Item berhasil dihapus!');
+        pendingDelete = null;
+    }
+
+    function closeConfirmModal() {
+        const modal = document.getElementById('confirm-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    // ==================== CLEAR DATA ====================
+    function clearData(type) {
+        pendingDelete = { type: 'clear', clearType: type };
+        
+        const labels = {
+            wishes: 'semua ucapan',
+            rsvps: 'semua RSVP',
+            gifts: 'semua hadiah',
+            all: 'SEMUA DATA',
+        };
+        
+        document.getElementById('confirm-title').textContent = 'Hapus Data';
+        document.getElementById('confirm-message').textContent = `Apakah Anda yakin ingin menghapus ${labels[type]}? Tindakan ini tidak dapat dibatalkan.`;
+        document.getElementById('confirm-btn').onclick = () => {
+            if (type === 'all' || type === 'wishes') {
+                localStorage.removeItem('wedding_wishes');
+                DB._wishes = [];
+                // Clear all wishes in Supabase (id > 0)
+                fetch(`${SUPABASE_URL}/rest/v1/wishes?id=gt.0`, {
+                    method: 'DELETE',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                }).catch(() => {});
+            }
+            if (type === 'all' || type === 'rsvps') localStorage.removeItem('wedding_rsvps');
+            if (type === 'all' || type === 'gifts') localStorage.removeItem('wedding_gifts');
+            if (type === 'all') localStorage.removeItem('wedding_messages');
+            
+            closeConfirmModal();
+            showTab('overview');
+            showAdminToast('Data berhasil dihapus!');
+        };
+        
+        const modal = document.getElementById('confirm-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    // ==================== LINK GENERATOR LOGIC ====================
+    const DEFAULT_WA_TEMPLATE = `Kepada Yth.
+Bapak/Ibu/Saudara/i [NAMA]
+
+Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan kami:
+
+*Rizky Abdul Azis & Isla Nurmila*
+
+🗓️ *Jumat, 8 Januari 2027*
+⏰ Akad: 09.00 - 10.00 WIB
+⏰ Resepsi: 10.00 - 15.00 WIB
+📍 Lokasi: Rumah Mempelai Wanita (7°18'39.1"S 108°11'05.1"E)
+
+Info lengkap dan link undangan digital:
+👉 [LINK]
+
+Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kami berdua.
+
+Terima kasih.
+Wassalamu'alaikum Warahmatullahi Wabarakatuh.
+
+_Rizky & Isla_`;
+
+    let guests = [];
+    let latestGuest = null;
+
+    function getDefaultBaseUrl() {
+        const loc = window.location;
+        const origin = loc.origin;
+        let path = loc.pathname;
+        if (path.endsWith('admin.html')) {
+            path = path.replace('admin.html', 'index.html');
+        } else if (path.endsWith('/')) {
+            path = path + 'index.html';
+        } else {
+            const parts = path.split('/');
+            parts.pop();
+            path = parts.join('/') + '/index.html';
+        }
+        return origin + path;
+    }
+
+    function getBaseUrl() {
+        return localStorage.getItem('wedding_base_url') || getDefaultBaseUrl();
+    }
+
+    function initGeneratorTab() {
+        loadGuests();
+        loadSettings();
+        renderGuestList();
+        if (window.lucide) lucide.createIcons();
+    }
+
+    function loadSettings() {
+        const currentUrl = getBaseUrl();
+        const input = document.getElementById('base-url-input');
+        if (input) input.value = currentUrl;
+    }
+
+    function toggleSettings() {
+        const box = document.getElementById('settings-box');
+        if (box) box.classList.toggle('hidden');
+    }
+
+    function saveBaseUrl() {
+        const input = document.getElementById('base-url-input');
+        if (!input) return;
+        const val = input.value.trim();
+        if (!val) return;
+        localStorage.setItem('wedding_base_url', val);
+        loadSettings();
+        renderGuestList();
+        if (latestGuest) updateLatestResult(latestGuest);
+        showAdminToast('URL dasar berhasil disimpan!');
+        toggleSettings();
+    }
+
+    function resetBaseUrl() {
+        localStorage.removeItem('wedding_base_url');
+        loadSettings();
+        renderGuestList();
+        if (latestGuest) updateLatestResult(latestGuest);
+        showAdminToast('URL dasar direset ke default!');
+        toggleSettings();
+    }
+
+    function buildGuestUrl(name) {
+        const base = getBaseUrl();
+        const separator = base.includes('?') ? '&' : '?';
+        return `${base}${separator}to=${encodeURIComponent(name)}`;
+    }
+
+    function buildWaMessage(name, url) {
+        return DEFAULT_WA_TEMPLATE.replace(/\[NAMA\]/g, name).replace(/\[LINK\]/g, url);
+    }
+
+    function handleSingleSubmit(e) {
+        e.preventDefault();
+        const input = document.getElementById('guest-name-input');
+        if (!input) return;
+        const name = input.value.trim();
+        if (!name) return;
+
+        const guest = addGuest(name);
+        input.value = '';
+        input.focus();
+        
+        updateLatestResult(guest);
+        showAdminToast(`Link untuk "${name}" berhasil dibuat! ✨`);
+    }
+
+    function loadGuests() {
+        try {
+            const stored = localStorage.getItem('wedding_guests_list');
+            guests = stored ? JSON.parse(stored) : [];
+        } catch (err) {
+            guests = [];
+        }
+    }
+
+    function saveGuests() {
+        localStorage.setItem('wedding_guests_list', JSON.stringify(guests));
+    }
+
+    function addGuest(name) {
+        const existing = guests.find(g => g.name.toLowerCase() === name.toLowerCase());
+        if (existing) {
+            existing.timestamp = new Date().toISOString();
+            saveGuests();
+            renderGuestList();
+            return existing;
+        }
+
+        const guest = {
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
+            name: name,
+            timestamp: new Date().toISOString()
+        };
+        guests.unshift(guest);
+        saveGuests();
+        renderGuestList();
+        return guest;
+    }
+
+    function deleteGuest(id) {
+        guests = guests.filter(g => g.id !== id);
+        saveGuests();
+        renderGuestList();
+        showAdminToast('Tamu berhasil dihapus');
+    }
+
+    function clearAllGuests() {
+        if (guests.length === 0) return;
+        if (confirm('Yakin ingin menghapus semua daftar tamu tersimpan?')) {
+            guests = [];
+            saveGuests();
+            renderGuestList();
+            const card = document.getElementById('latest-result-card');
+            if (card) card.classList.add('hidden');
+            showAdminToast('Semua tamu berhasil dihapus.');
+        }
+    }
+
+    function updateLatestResult(guest) {
+        latestGuest = guest;
+        const card = document.getElementById('latest-result-card');
+        const nameBadge = document.getElementById('latest-guest-name-badge');
+        const urlText = document.getElementById('latest-url-text');
+        const waLink = document.getElementById('latest-wa-link');
+        if (!card) return;
+
+        const url = buildGuestUrl(guest.name);
+        const waMessage = buildWaMessage(guest.name, url);
+
+        if (nameBadge) nameBadge.textContent = guest.name;
+        if (urlText) urlText.textContent = url;
+        if (waLink) waLink.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(waMessage)}`;
+
+        card.classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+    }
+
+    function renderGuestList() {
+        const container = document.getElementById('guest-list-container');
+        const emptyState = document.getElementById('guest-empty-state');
+        const countEl = document.getElementById('total-guest-count');
+        const searchEl = document.getElementById('search-input');
+        if (!container) return;
+
+        const searchTerm = (searchEl && searchEl.value ? searchEl.value : '').toLowerCase();
+        const filtered = guests.filter(g => g.name.toLowerCase().includes(searchTerm));
+        if (countEl) countEl.textContent = guests.length;
+
+        if (filtered.length === 0) {
+            container.innerHTML = '';
+            if (emptyState) emptyState.classList.remove('hidden');
+            return;
+        }
+
+        if (emptyState) emptyState.classList.add('hidden');
+        container.innerHTML = filtered.map(guest => {
+            const url = buildGuestUrl(guest.name);
+            const waMessage = buildWaMessage(guest.name, url);
+            const encodedWa = encodeURIComponent(waMessage);
+
+            return `
+                <div class="bg-gray-50 hover:bg-white rounded-xl p-3 border border-gray-100 transition-all hover:shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-2">
+                            <h5 class="font-sans font-bold text-xs text-gray-800 truncate">${escapeHtml(guest.name)}</h5>
+                            <span class="text-[10px] text-gray-400">• ${formatTime(guest.timestamp)}</span>
+                        </div>
+                        <p class="font-mono text-[11px] text-gray-500 truncate mt-0.5">${escapeHtml(url)}</p>
+                    </div>
+                    
+                    <div class="flex items-center gap-1 flex-shrink-0">
+                        <button onclick="copyText('${escapeJsString(url)}', this, 'Link disalin!')" title="Salin Link Saja" class="p-1.5 rounded-lg bg-white text-gray-700 hover:text-royal-900 hover:bg-gray-100 transition-colors border border-gray-200">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        </button>
+                        
+                        <button onclick="copyText('${escapeJsString(waMessage)}', this, 'Teks WA disalin!')" title="Salin Teks Lengkap WhatsApp" class="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors border border-emerald-200">
+                            <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                        </button>
+                        
+                        <a href="https://api.whatsapp.com/send?text=${encodedWa}" target="_blank" title="Kirim ke WhatsApp" class="p-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors shadow-sm">
+                            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                        </a>
+
+                        <a href="${escapeHtml(url)}" target="_blank" title="Lihat Tampilan Tamu" class="p-1.5 rounded-lg bg-royal-800 hover:bg-royal-700 text-gold-300 transition-colors shadow-sm">
+                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                        </a>
+                        
+                        <button onclick="deleteGuest('${guest.id}')" title="Hapus Tamu" class="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        if (window.lucide) lucide.createIcons();
+    }
+
+    function copyLatestLink(button) {
+        if (!latestGuest) return;
+        const url = buildGuestUrl(latestGuest.name);
+        copyText(url, button, 'Link disalin!');
+    }
+
+    function copyLatestWaMessage(button) {
+        if (!latestGuest) return;
+        const url = buildGuestUrl(latestGuest.name);
+        const msg = buildWaMessage(latestGuest.name, url);
+        copyText(msg, button, 'Teks WA disalin!');
+    }
+
+    function copyText(text, btn, successMsg = 'Tersalin!') {
+        navigator.clipboard.writeText(text).then(() => {
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5"></i> <span class="text-[10px]">${successMsg}</span>`;
+            if (window.lucide) lucide.createIcons();
+            showAdminToast(successMsg);
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                if (window.lucide) lucide.createIcons();
+            }, 1800);
+        }).catch(() => {
+            showAdminToast('Gagal menyalin');
+        });
+    }
+
+    function exportToCsv() {
+        if (guests.length === 0) {
+            showAdminToast('Tidak ada tamu untuk diekspor');
+            return;
+        }
+
+        let csv = 'Nama Tamu,Link Undangan,Waktu Dibuat\n';
+        guests.forEach(g => {
+            const url = buildGuestUrl(g.name);
+            csv += `"${g.name.replace(/"/g, '""')}","${url}","${g.timestamp}"\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', `Daftar_Tamu_Rizky_Isla_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showAdminToast('File CSV berhasil diunduh! 📄');
+    }
+
+    function escapeJsString(text) {
+        if (!text) return '';
+        return text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\\\n').replace(/\r/g, '');
+    }
+
+    function formatTime(iso) {
+        try {
+            const d = new Date(iso);
+            return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+        } catch {
+            return '';
+        }
+    }
+
+
+    // ==================== EXPORT ====================
+    function exportData(type) {
+        let data, filename;
+        
+        if (type === 'wishes') {
+            data = DB.getWishes();
+            filename = 'ucapan_pernikahan.csv';
+        } else if (type === 'rsvp') {
+            data = DB.getRSVPs();
+            filename = 'rsvp_pernikahan.csv';
+        } else if (type === 'gifts') {
+            data = DB.getGifts();
+            filename = 'amplop_digital.csv';
+        } else if (type === 'messages') {
+            data = DB.getMessages();
+            filename = 'riwayat_pesan.csv';
+        }
+        
+        if (!data || data.length === 0) {
+            showAdminToast('Tidak ada data untuk diekspor');
+            return;
+        }
+        
+        // Convert to CSV
+        const headers = Object.keys(data[0]).join(',');
+        const rows = data.map(item => 
+            Object.values(item).map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')
+        );
+        const csv = [headers, ...rows].join('\n');
+        
+        // Download
+        const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        showAdminToast('Data berhasil diexport! 📥');
+    }
+
+    // ==================== SIDEBAR ====================
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('-translate-x-full');
+    }
+
+    // ==================== TOAST ====================
+    function showAdminToast(message) {
+        const toast = document.getElementById('admin-toast');
+        document.getElementById('admin-toast-message').textContent = message;
+        toast.classList.add('show');
+        toast.style.transform = 'translate(-50%, 0)';
+        toast.style.opacity = '1';
+        
+        setTimeout(() => {
+            toast.style.transform = 'translate(-50%, 80px)';
+            toast.style.opacity = '0';
+        }, 3000);
+    }
+
+    // ==================== UTILS ====================
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function formatDate(isoString) {
+        const date = new Date(isoString);
+        return date.toLocaleDateString('id-ID', {
+            day: 'numeric', month: 'short', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+    }
+    </script>
+</body>
+</html>
