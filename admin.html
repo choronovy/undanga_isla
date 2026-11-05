@@ -992,6 +992,85 @@
             const d = this.getGifts().filter(g => g.id !== id);
             localStorage.setItem('wedding_gifts', JSON.stringify(d));
         },
+        async fetchAttendance() {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/attendance?select=*&order=created_at.desc`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    attendanceList = data.map(item => ({
+                        id: String(item.id),
+                        name: item.name,
+                        code: item.code || '',
+                        method: item.method || 'qr',
+                        timestamp: item.created_at
+                    }));
+                    saveAttendance();
+                    return attendanceList;
+                }
+            } catch (e) {
+                console.warn('Supabase attendance offline or table not found, using localStorage', e);
+            }
+            loadAttendance();
+            return attendanceList;
+        },
+        async saveAttendanceRecord(record) {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/attendance`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify({
+                        name: record.name,
+                        code: record.code,
+                        method: record.method
+                    })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data[0] && data[0].id) {
+                        record.id = String(data[0].id);
+                        saveAttendance();
+                    }
+                }
+            } catch (e) {
+                console.warn('Gagal simpan presensi ke Supabase:', e);
+            }
+        },
+        async deleteAttendanceRecord(id) {
+            try {
+                await fetch(`${SUPABASE_URL}/rest/v1/attendance?id=eq.${encodeURIComponent(id)}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+            } catch (e) {
+                console.warn('Gagal hapus presensi di Supabase:', e);
+            }
+        },
+        async clearAllAttendanceRecords() {
+            try {
+                await fetch(`${SUPABASE_URL}/rest/v1/attendance?id=gt.0`, {
+                    method: 'DELETE',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+            } catch (e) {
+                console.warn('Gagal hapus semua presensi di Supabase:', e);
+            }
+        }
     };
 
     // ==================== AUTH ====================
@@ -1818,6 +1897,14 @@ _Rizky & Isla_`;
         renderAttendanceList();
         populateGuestAutocomplete();
         if (window.lucide) lucide.createIcons();
+
+        // Sync with Supabase Cloud
+        if (typeof DB !== 'undefined' && DB.fetchAttendance) {
+            DB.fetchAttendance().then(() => {
+                updateAttendanceStats();
+                renderAttendanceList();
+            });
+        }
     }
 
     function updateAttendanceStats() {
@@ -2036,6 +2123,11 @@ _Rizky & Isla_`;
         attendanceList.unshift(newRecord);
         saveAttendance();
 
+        // Sync save to Supabase Cloud
+        if (typeof DB !== 'undefined' && DB.saveAttendanceRecord) {
+            DB.saveAttendanceRecord(newRecord);
+        }
+
         playAttendanceBeep();
         showAdminToast(`✅ "${safeName}" berhasil dicatat hadir! ✨`);
         showLastScanCard(safeName, `Presensi berhasil • ${formatDate(newRecord.timestamp)}`);
@@ -2071,6 +2163,9 @@ _Rizky & Isla_`;
         loadAttendance();
         attendanceList = attendanceList.filter(a => a.id !== id);
         saveAttendance();
+        if (typeof DB !== 'undefined' && DB.deleteAttendanceRecord) {
+            DB.deleteAttendanceRecord(id);
+        }
         updateAttendanceStats();
         renderAttendanceList();
         showAdminToast('Data presensi dihapus');
@@ -2081,6 +2176,9 @@ _Rizky & Isla_`;
         if (!confirm('Yakin ingin menghapus seluruh data presensi kehadiran tamu?')) return;
         attendanceList = [];
         saveAttendance();
+        if (typeof DB !== 'undefined' && DB.clearAllAttendanceRecords) {
+            DB.clearAllAttendanceRecords();
+        }
         updateAttendanceStats();
         renderAttendanceList();
         dismissLastScanCard();
