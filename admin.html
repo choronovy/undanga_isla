@@ -54,6 +54,8 @@
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <!-- HTML5 QR Code Scanner -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
     <style>
         * { scrollbar-width: thin; scrollbar-color: rgba(30,58,138,0.2) transparent; }
@@ -159,6 +161,10 @@
                     <i data-lucide="link" class="w-5 h-5"></i>
                     <span>Link Generator</span>
                 </button>
+                <button onclick="showTab('attendance')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all text-left" data-tab="attendance">
+                    <i data-lucide="scan-line" class="w-5 h-5"></i>
+                    <span>Scan & Presensi</span>
+                </button>
                 <button onclick="showTab('settings')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all text-left" data-tab="settings">
                     <i data-lucide="settings" class="w-5 h-5"></i>
                     <span>Pengaturan</span>
@@ -246,6 +252,23 @@
                         </div>
                     </div>
                     
+                    <!-- Quick Presensi Banner -->
+                    <div class="bg-gradient-to-r from-royal-900 via-royal-800 to-royal-950 rounded-2xl p-5 text-white shadow-md border border-royal-700/50 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300 flex-shrink-0">
+                                <i data-lucide="qr-code" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-display font-bold text-base text-white">Presensi Kehadiran Tamu (QR Scanner)</h4>
+                                <p class="text-xs text-royal-200 mt-0.5">Sudah <span id="overview-attendance-count" class="font-bold text-emerald-400">0</span> tamu hadir tercatat lewat scanner presensi.</p>
+                            </div>
+                        </div>
+                        <button onclick="showTab('attendance')" class="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 whitespace-nowrap">
+                            <i data-lucide="scan-line" class="w-4 h-4"></i>
+                            <span>Buka Scanner QR</span>
+                        </button>
+                    </div>
+
                     <!-- Recent activity -->
                     <div class="grid lg:grid-cols-2 gap-6">
                         <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
@@ -571,6 +594,256 @@
         </div>
                 </div>
 
+                <!-- ==================== ATTENDANCE & QR SCANNER TAB ==================== -->
+                <div id="tab-attendance" class="tab-content hidden">
+
+                    <!-- Header Banner -->
+                    <div class="bg-gradient-to-br from-royal-950 via-royal-900 to-royal-950 rounded-2xl p-6 text-white shadow-md border border-royal-700/50 mb-6 relative overflow-hidden">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                        Presensi Realtime
+                                    </span>
+                                </div>
+                                <h3 class="font-display text-xl font-bold text-white">Scan QR Code & Presensi Tamu</h3>
+                                <p class="text-xs text-royal-200 mt-1 max-w-xl">
+                                    Arahkan kamera smartphone atau webcam ke QR Code tiket digital tamu untuk verifikasi dan pencatatan presensi kehadiran otomatis.
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                                <button onclick="toggleAttendanceScanner()" id="scanner-toggle-btn" class="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-2">
+                                    <i data-lucide="camera" class="w-4 h-4"></i>
+                                    <span id="scanner-toggle-text">Buka Kamera Scanner</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Stats Cards -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-emerald-100 relative overflow-hidden">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-semibold text-emerald-700 uppercase tracking-wider">Tamu Hadir</span>
+                                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                    <i data-lucide="user-check" class="w-4 h-4"></i>
+                                </div>
+                            </div>
+                            <h4 id="stat-attendance-total" class="text-2xl sm:text-3xl font-bold text-emerald-600">0</h4>
+                            <p class="text-[11px] text-emerald-500 mt-1 font-medium">Tercatat di resepsi</p>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-royal-100 relative overflow-hidden">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-semibold text-royal-700 uppercase tracking-wider">Terdaftar</span>
+                                <div class="w-8 h-8 rounded-lg bg-royal-50 text-royal-600 flex items-center justify-center">
+                                    <i data-lucide="users" class="w-4 h-4"></i>
+                                </div>
+                            </div>
+                            <h4 id="stat-attendance-invited" class="text-2xl sm:text-3xl font-bold text-royal-900">0</h4>
+                            <p class="text-[11px] text-royal-400 mt-1 font-medium">Dari data generator</p>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-amber-100 relative overflow-hidden">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-semibold text-amber-700 uppercase tracking-wider">Belum Hadir</span>
+                                <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                                    <i data-lucide="clock" class="w-4 h-4"></i>
+                                </div>
+                            </div>
+                            <h4 id="stat-attendance-remaining" class="text-2xl sm:text-3xl font-bold text-amber-600">0</h4>
+                            <p class="text-[11px] text-amber-500 mt-1 font-medium">Menunggu kedatangan</p>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-gray-100 relative overflow-hidden">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-semibold text-gray-600 uppercase tracking-wider">Scan Terakhir</span>
+                                <div class="w-8 h-8 rounded-lg bg-gray-50 text-gray-500 flex items-center justify-center">
+                                    <i data-lucide="scan" class="w-4 h-4"></i>
+                                </div>
+                            </div>
+                            <h4 id="stat-attendance-last" class="text-sm sm:text-base font-bold text-gray-800 truncate">-</h4>
+                            <p id="stat-attendance-last-time" class="text-[11px] text-gray-400 mt-1 font-medium">Belum ada scan</p>
+                        </div>
+                    </div>
+
+                    <!-- Main Attendance 2-Column Layout -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+                        <!-- Left Column: Live Scanner & Manual Input (5 cols) -->
+                        <div class="lg:col-span-5 space-y-6">
+
+                            <!-- Camera Scanner Card -->
+                            <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-xl border border-royal-100 relative">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="font-display font-bold text-base text-royal-950 flex items-center gap-2">
+                                        <i data-lucide="camera" class="w-4 h-4 text-royal-600"></i>
+                                        <span>Kamera Scanner QR</span>
+                                    </h4>
+                                    <div class="flex items-center gap-1.5">
+                                        <button onclick="toggleAudioBeep()" id="audio-toggle-btn" title="Toggle Suara Beep" class="p-1.5 rounded-lg bg-royal-50 hover:bg-royal-100 text-royal-700 transition-colors text-xs flex items-center gap-1">
+                                            <i data-lucide="volume-2" id="audio-icon" class="w-4 h-4"></i>
+                                        </button>
+                                        <button onclick="switchScannerCamera()" id="switch-camera-btn" title="Ganti Kamera Depan/Belakang" class="p-1.5 rounded-lg bg-royal-50 hover:bg-royal-100 text-royal-700 transition-colors text-xs flex items-center gap-1">
+                                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Scanner Viewport Box -->
+                                <div class="relative bg-slate-900 rounded-2xl overflow-hidden aspect-square sm:aspect-[4/3] flex items-center justify-center border-2 border-royal-200 shadow-inner">
+                                    <div id="qr-reader" class="w-full h-full"></div>
+
+                                    <!-- Idle State (Camera off) -->
+                                    <div id="qr-idle-overlay" class="absolute inset-0 bg-slate-900/95 flex flex-col items-center justify-center p-6 text-center text-white">
+                                        <div class="w-16 h-16 rounded-2xl bg-royal-800/80 border border-royal-600/50 flex items-center justify-center mb-3 shadow-lg">
+                                            <i data-lucide="scan-line" class="w-8 h-8 text-royal-300"></i>
+                                        </div>
+                                        <p class="font-sans font-bold text-sm text-white">Kamera Belum Aktif</p>
+                                        <p class="font-sans text-xs text-royal-300 mt-1 max-w-xs">Klik tombol di bawah untuk mengizinkan dan mengaktifkan kamera scanner.</p>
+                                        <button onclick="startQrScanner()" class="mt-4 px-4 py-2 bg-gradient-to-r from-royal-600 to-royal-700 hover:from-royal-500 hover:to-royal-600 text-gold-300 rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-2 border border-gold-400/30">
+                                            <i data-lucide="power" class="w-4 h-4"></i>
+                                            <span>Aktifkan Scanner</span>
+                                        </button>
+                                    </div>
+
+                                    <!-- Active Scan Targeting Box Guide -->
+                                    <div id="qr-active-guide" class="hidden absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-8">
+                                        <div class="w-52 h-52 border-2 border-emerald-400/80 rounded-2xl relative shadow-[0_0_20px_rgba(52,211,153,0.3)]">
+                                            <!-- Corner Accents -->
+                                            <div class="absolute -top-1 -left-1 w-5 h-5 border-t-4 border-l-4 border-emerald-400 rounded-tl-lg"></div>
+                                            <div class="absolute -top-1 -right-1 w-5 h-5 border-t-4 border-r-4 border-emerald-400 rounded-tr-lg"></div>
+                                            <div class="absolute -bottom-1 -left-1 w-5 h-5 border-b-4 border-l-4 border-emerald-400 rounded-bl-lg"></div>
+                                            <div class="absolute -bottom-1 -right-1 w-5 h-5 border-b-4 border-r-4 border-emerald-400 rounded-br-lg"></div>
+                                            <!-- Scanning Bar Animation -->
+                                            <div class="w-full h-1 bg-gradient-to-r from-transparent via-emerald-400 to-transparent animate-bounce mt-24"></div>
+                                        </div>
+                                        <span class="mt-3 text-[11px] font-sans font-bold text-white bg-black/60 px-3 py-1 rounded-full backdrop-blur-sm">
+                                            Posisikan QR di dalam kotak
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Scanner Status Bar -->
+                                <div id="scanner-status" class="mt-3 text-center text-xs font-sans text-gray-500 py-1 flex items-center justify-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-gray-400"></span>
+                                    <span>Status scanner: Standby</span>
+                                </div>
+                            </div>
+
+                            <!-- Manual Check-In Card (Fallback jika tanpa kamera) -->
+                            <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-xl border border-royal-100">
+                                <h4 class="font-display font-bold text-sm text-royal-950 mb-1 flex items-center gap-2">
+                                    <i data-lucide="user-plus" class="w-4 h-4 text-royal-600"></i>
+                                    <span>Presensi Manual</span>
+                                </h4>
+                                <p class="text-xs text-gray-500 mb-3">Tamu hadir tanpa membawa tiket? Masukkan nama di bawah untuk pencatatan manual.</p>
+                                <form onsubmit="handleManualCheckIn(event)" class="space-y-3">
+                                    <div>
+                                        <input type="text" id="manual-guest-name" list="guest-autocomplete" required placeholder="Ketik nama tamu undangan..." class="w-full px-4 py-2.5 rounded-xl border border-royal-200 focus:border-royal-500 outline-none text-xs text-royal-900 bg-royal-50/30">
+                                        <datalist id="guest-autocomplete">
+                                            <!-- Populated from wedding_guests_list -->
+                                        </datalist>
+                                    </div>
+                                    <button type="submit" class="w-full py-2.5 bg-royal-800 hover:bg-royal-700 text-gold-300 font-sans font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4"></i>
+                                        <span>Catat Kehadiran Tamu</span>
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+
+                        <!-- Right Column: Live Attendance Guest Log (7 cols) -->
+                        <div class="lg:col-span-7 space-y-6">
+
+                            <!-- Latest Scan Banner (Popup info when a guest scans) -->
+                            <div id="attendance-last-scan-card" class="hidden bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-950 rounded-3xl p-5 text-white shadow-xl border-2 border-emerald-400/50 relative overflow-hidden transition-all duration-300">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300 flex-shrink-0 text-xl font-bold">
+                                            ✓
+                                        </div>
+                                        <div>
+                                            <span class="text-[10px] uppercase font-bold tracking-widest text-emerald-300 bg-emerald-400/20 px-2.5 py-0.5 rounded-full border border-emerald-400/30">
+                                                Presensi Berhasil
+                                            </span>
+                                            <h4 id="last-scanned-guest-name" class="font-display text-lg sm:text-xl font-bold text-white mt-1">
+                                                Nama Tamu
+                                            </h4>
+                                            <p id="last-scanned-guest-time" class="text-xs text-emerald-200 mt-0.5 font-sans">
+                                                Baru saja hadir
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button onclick="dismissLastScanCard()" class="text-white/60 hover:text-white p-1">
+                                        <i data-lucide="x" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Attendance Table Card -->
+                            <div class="bg-white rounded-3xl p-6 shadow-xl border border-royal-100">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-royal-100">
+                                    <div>
+                                        <h3 class="font-display text-lg font-bold text-royal-950 flex items-center gap-2">
+                                            <i data-lucide="clipboard-check" class="w-5 h-5 text-emerald-600"></i>
+                                            Buku Tamu Presensi Hadir
+                                        </h3>
+                                        <p class="font-sans text-xs text-royal-600 mt-0.5">
+                                            Total <span id="attendance-count-badge" class="font-bold text-royal-950">0</span> tamu telah hadir
+                                        </p>
+                                    </div>
+
+                                    <!-- Table Search & Export Actions -->
+                                    <div class="flex items-center gap-2">
+                                        <div class="relative">
+                                            <input type="text" id="attendance-search-input" oninput="renderAttendanceList()" placeholder="Cari nama..." class="pl-8 pr-3 py-1.5 rounded-xl border border-royal-200 text-xs text-royal-900 bg-royal-50/30 focus:border-royal-500 outline-none w-36 sm:w-44">
+                                            <i data-lucide="search" class="w-3.5 h-3.5 text-royal-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
+                                        </div>
+                                        <button onclick="exportAttendanceCsv()" title="Unduh CSV Presensi" class="p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition-colors border border-emerald-200 flex items-center gap-1.5 text-xs font-bold">
+                                            <i data-lucide="download" class="w-4 h-4"></i>
+                                            <span class="hidden sm:inline">CSV</span>
+                                        </button>
+                                        <button onclick="clearAllAttendance()" title="Hapus Semua Presensi" class="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors border border-rose-200">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Attendance Table Container -->
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left">
+                                        <thead>
+                                            <tr class="border-b border-royal-100 font-sans text-[11px] font-bold uppercase tracking-wider text-royal-700 bg-royal-50/50">
+                                                <th class="px-4 py-3 rounded-l-xl">No</th>
+                                                <th class="px-4 py-3">Nama Tamu</th>
+                                                <th class="px-4 py-3">Waktu Hadir</th>
+                                                <th class="px-4 py-3">Metode</th>
+                                                <th class="px-4 py-3 text-right rounded-r-xl">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="attendance-table-body" class="divide-y divide-gray-100 font-sans text-xs">
+                                            <!-- Populated by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Empty State -->
+                                <div id="attendance-empty-state" class="py-12 text-center text-royal-400">
+                                    <i data-lucide="user-x" class="w-12 h-12 mx-auto mb-3 opacity-40"></i>
+                                    <p class="font-sans text-sm font-semibold text-royal-700">Belum ada tamu yang hadir</p>
+                                    <p class="font-sans text-xs text-royal-400 mt-1">Aktifkan scanner kamera atau gunakan form manual untuk mulai mencatat presensi.</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
                 <!-- ==================== SETTINGS TAB ==================== -->
                 <div id="tab-settings" class="tab-content hidden">
                     <div class="max-w-2xl space-y-6">
@@ -821,9 +1094,15 @@
             gifts: 'Amplop Digital',
             messages: 'Riwayat Pesan',
             generator: 'Link Generator',
+            attendance: 'Scan & Presensi Tamu',
             settings: 'Pengaturan',
         };
         document.getElementById('page-title').textContent = titles[tabName] || 'Dashboard';
+
+        // Auto stop camera if leaving attendance tab
+        if (tabName !== 'attendance' && typeof isScannerRunning !== 'undefined' && isScannerRunning) {
+            stopQrScanner();
+        }
 
         // Render content
         if (tabName === 'overview') {
@@ -836,6 +1115,7 @@
         if (tabName === 'gifts') renderGiftsTable();
         if (tabName === 'messages') renderMessages();
         if (tabName === 'generator') initGeneratorTab();
+        if (tabName === 'attendance') initAttendanceTab();
 
         // Close mobile sidebar
         document.getElementById('sidebar').classList.add('-translate-x-full');
@@ -857,6 +1137,13 @@
         
         const pct = rsvps.length > 0 ? Math.round((attending.length / rsvps.length) * 100) : 0;
         document.getElementById('stat-attend-pct').textContent = pct + '%';
+
+        // Overview attendance
+        if (typeof loadAttendance === 'function') {
+            loadAttendance();
+            const overviewAtt = document.getElementById('overview-attendance-count');
+            if (overviewAtt) overviewAtt.textContent = attendanceList.length;
+        }
 
         // Recent wishes
         const recentWishesEl = document.getElementById('recent-wishes');
@@ -1499,6 +1786,456 @@ _Rizky & Isla_`;
         URL.revokeObjectURL(url);
         
         showAdminToast('Data berhasil diexport! 📥');
+    }
+
+    // ==================== ATTENDANCE & QR SCANNER ====================
+    let attendanceList = [];
+    let html5QrCode = null;
+    let isScannerRunning = false;
+    let soundBeepEnabled = true;
+    let availableCameras = [];
+    let currentCameraIndex = 0;
+    let lastScannedText = '';
+    let lastScanTime = 0;
+
+    function loadAttendance() {
+        try {
+            const stored = localStorage.getItem('wedding_attendance_list');
+            attendanceList = stored ? JSON.parse(stored) : [];
+        } catch (e) {
+            attendanceList = [];
+        }
+    }
+
+    function saveAttendance() {
+        localStorage.setItem('wedding_attendance_list', JSON.stringify(attendanceList));
+    }
+
+    function initAttendanceTab() {
+        loadAttendance();
+        loadGuests();
+        updateAttendanceStats();
+        renderAttendanceList();
+        populateGuestAutocomplete();
+        if (window.lucide) lucide.createIcons();
+    }
+
+    function updateAttendanceStats() {
+        loadAttendance();
+        loadGuests();
+
+        const totalAttended = attendanceList.length;
+        const totalInvited = guests.length;
+        const remaining = Math.max(0, totalInvited - totalAttended);
+
+        const elTotal = document.getElementById('stat-attendance-total');
+        const elInvited = document.getElementById('stat-attendance-invited');
+        const elRemaining = document.getElementById('stat-attendance-remaining');
+        const elBadge = document.getElementById('attendance-count-badge');
+        const elLast = document.getElementById('stat-attendance-last');
+        const elLastTime = document.getElementById('stat-attendance-last-time');
+
+        if (elTotal) elTotal.textContent = totalAttended;
+        if (elInvited) elInvited.textContent = totalInvited;
+        if (elRemaining) elRemaining.textContent = remaining;
+        if (elBadge) elBadge.textContent = totalAttended;
+
+        if (attendanceList.length > 0) {
+            const last = attendanceList[0];
+            if (elLast) elLast.textContent = last.name;
+            if (elLastTime) elLastTime.textContent = formatDate(last.timestamp);
+        } else {
+            if (elLast) elLast.textContent = '-';
+            if (elLastTime) elLastTime.textContent = 'Belum ada scan';
+        }
+    }
+
+    function renderAttendanceList() {
+        const tbody = document.getElementById('attendance-table-body');
+        const emptyState = document.getElementById('attendance-empty-state');
+        const searchInput = document.getElementById('attendance-search-input');
+        const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+
+        if (!tbody) return;
+
+        const filtered = query
+            ? attendanceList.filter(a => (a.name || '').toLowerCase().includes(query))
+            : attendanceList;
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = '';
+            if (emptyState) emptyState.classList.remove('hidden');
+            return;
+        }
+
+        if (emptyState) emptyState.classList.add('hidden');
+
+        tbody.innerHTML = filtered.map((item, idx) => {
+            const isQr = item.method === 'qr';
+            return `
+                <tr class="hover:bg-royal-50/40 transition-colors">
+                    <td class="px-4 py-3 text-royal-400 font-mono text-[11px]">${idx + 1}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-full ${isQr ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'} flex items-center justify-center font-bold text-xs flex-shrink-0">
+                                ${(item.name || 'T').charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <p class="font-sans font-bold text-royal-950 text-xs">${escapeHtml(item.name)}</p>
+                                ${item.code ? `<span class="text-[10px] text-gray-400 font-mono">${escapeHtml(item.code)}</span>` : ''}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 text-gray-600 font-sans text-xs whitespace-nowrap">
+                        ${formatDate(item.timestamp)}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${isQr ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-blue-50 text-blue-700 border border-blue-200'}">
+                            <i data-lucide="${isQr ? 'qr-code' : 'edit-3'}" class="w-3 h-3"></i>
+                            <span>${isQr ? 'QR Scan' : 'Manual'}</span>
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-right whitespace-nowrap">
+                        <button onclick="deleteAttendance('${item.id}')" class="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Hapus Presensi">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        if (window.lucide) lucide.createIcons();
+    }
+
+    function populateGuestAutocomplete() {
+        const datalist = document.getElementById('guest-autocomplete');
+        if (!datalist) return;
+        datalist.innerHTML = guests.map(g => `<option value="${escapeHtml(g.name)}">`).join('');
+    }
+
+    // Web Audio API Beep Synthesizer
+    function playAttendanceBeep() {
+        if (!soundBeepEnabled) return;
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            const now = ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, now);
+            osc.frequency.setValueAtTime(1174, now + 0.08);
+
+            gain.gain.setValueAtTime(0.35, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.35);
+        } catch (e) {
+            console.warn('AudioContext error:', e);
+        }
+    }
+
+    function playDuplicateWarningBeep() {
+        if (!soundBeepEnabled) return;
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            const now = ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(330, now);
+            osc.frequency.setValueAtTime(260, now + 0.12);
+
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.3);
+        } catch (e) {
+            console.warn('AudioContext error:', e);
+        }
+    }
+
+    function toggleAudioBeep() {
+        soundBeepEnabled = !soundBeepEnabled;
+        const icon = document.getElementById('audio-icon');
+        if (icon) {
+            icon.setAttribute('data-lucide', soundBeepEnabled ? 'volume-2' : 'volume-x');
+            if (window.lucide) lucide.createIcons();
+        }
+        showAdminToast(soundBeepEnabled ? 'Suara beep diaktifkan 🔊' : 'Suara beep dibisukan 🔇');
+    }
+
+    function parseQrPayload(text) {
+        if (!text) return { name: '', code: '' };
+        const clean = text.trim();
+
+        // 1. JSON format: {"app":"undangan-isdul","name":"...","code":"..."}
+        if (clean.startsWith('{') && clean.endsWith('}')) {
+            try {
+                const parsed = JSON.parse(clean);
+                if (parsed.name) {
+                    return { name: parsed.name.trim(), code: parsed.code || '' };
+                }
+            } catch (e) {}
+        }
+
+        // 2. URL format: http.../?to=Nama+Tamu or ?nama=...
+        if (clean.includes('?to=') || clean.includes('&to=') || clean.includes('?nama=') || clean.includes('&nama=')) {
+            try {
+                const url = new URL(clean, window.location.origin);
+                const name = url.searchParams.get('to') || url.searchParams.get('nama');
+                if (name) return { name: decodeURIComponent(name).trim(), code: '' };
+            } catch (e) {}
+        }
+
+        // 3. Prefix format: ISDUL:Nama Tamu
+        if (clean.startsWith('ISDUL:')) {
+            return { name: clean.replace('ISDUL:', '').trim(), code: '' };
+        }
+
+        // 4. Raw text fallback
+        return { name: clean, code: '' };
+    }
+
+    function addAttendanceRecord(guestName, method, code) {
+        const safeName = (guestName || '').trim();
+        if (!safeName) return false;
+
+        loadAttendance();
+
+        // Check for duplicates
+        const existing = attendanceList.find(a => a.name.toLowerCase() === safeName.toLowerCase());
+        if (existing) {
+            playDuplicateWarningBeep();
+            showAdminToast(`⚠️ "${safeName}" sudah tercatat hadir pada ${formatDate(existing.timestamp)}`);
+            showLastScanCard(safeName, `Sudah hadir pada ${formatDate(existing.timestamp)} (Duplikat)`);
+            return false;
+        }
+
+        const newRecord = {
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
+            name: safeName,
+            timestamp: new Date().toISOString(),
+            method: method || 'qr',
+            code: code || ''
+        };
+
+        attendanceList.unshift(newRecord);
+        saveAttendance();
+
+        playAttendanceBeep();
+        showAdminToast(`✅ "${safeName}" berhasil dicatat hadir! ✨`);
+        showLastScanCard(safeName, `Presensi berhasil • ${formatDate(newRecord.timestamp)}`);
+
+        updateAttendanceStats();
+        renderAttendanceList();
+        return true;
+    }
+
+    function showLastScanCard(name, detail) {
+        const card = document.getElementById('attendance-last-scan-card');
+        const nameEl = document.getElementById('last-scanned-guest-name');
+        const timeEl = document.getElementById('last-scanned-guest-time');
+        if (!card || !nameEl) return;
+
+        nameEl.textContent = name;
+        if (timeEl) timeEl.textContent = detail;
+        card.classList.remove('hidden');
+
+        clearTimeout(card._dismissTimer);
+        card._dismissTimer = setTimeout(() => {
+            card.classList.add('hidden');
+        }, 8000);
+    }
+
+    function dismissLastScanCard() {
+        const card = document.getElementById('attendance-last-scan-card');
+        if (card) card.classList.add('hidden');
+    }
+
+    function deleteAttendance(id) {
+        if (!confirm('Hapus pencatatan presensi tamu ini?')) return;
+        loadAttendance();
+        attendanceList = attendanceList.filter(a => a.id !== id);
+        saveAttendance();
+        updateAttendanceStats();
+        renderAttendanceList();
+        showAdminToast('Data presensi dihapus');
+    }
+
+    function clearAllAttendance() {
+        if (attendanceList.length === 0) return;
+        if (!confirm('Yakin ingin menghapus seluruh data presensi kehadiran tamu?')) return;
+        attendanceList = [];
+        saveAttendance();
+        updateAttendanceStats();
+        renderAttendanceList();
+        dismissLastScanCard();
+        showAdminToast('Seluruh data presensi berhasil dibersihkan');
+    }
+
+    function handleManualCheckIn(e) {
+        e.preventDefault();
+        const input = document.getElementById('manual-guest-name');
+        if (!input) return;
+        const name = input.value.trim();
+        if (!name) return;
+
+        addAttendanceRecord(name, 'manual', '');
+        input.value = '';
+        input.focus();
+    }
+
+    // HTML5 QR Scanner Controller
+    async function startQrScanner() {
+        if (typeof Html5Qrcode === 'undefined') {
+            showAdminToast('Gagal memuat library QR Scanner. Periksa koneksi internet.');
+            return;
+        }
+
+        const idleOverlay = document.getElementById('qr-idle-overlay');
+        const activeGuide = document.getElementById('qr-active-guide');
+        const statusEl = document.getElementById('scanner-status');
+        const toggleBtnText = document.getElementById('scanner-toggle-text');
+
+        if (!html5QrCode) {
+            html5QrCode = new Html5Qrcode('qr-reader');
+        }
+
+        try {
+            if (statusEl) {
+                statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span><span>Menyiapkan kamera...</span>`;
+            }
+
+            const cameras = await Html5Qrcode.getCameras();
+            if (!cameras || cameras.length === 0) {
+                alert('Tidak ditemukan perangkat kamera di perangkat ini.');
+                return;
+            }
+            availableCameras = cameras;
+
+            const cameraId = availableCameras[currentCameraIndex % availableCameras.length].id;
+            const config = {
+                fps: 15,
+                qrbox: { width: 250, height: 250 },
+                aspectRatio: 1.0
+            };
+
+            await html5QrCode.start(
+                cameraId,
+                config,
+                (decodedText, decodedResult) => {
+                    handleQrScanResult(decodedText);
+                },
+                (errorMessage) => {
+                    // Frame scan attempt
+                }
+            );
+
+            isScannerRunning = true;
+            if (idleOverlay) idleOverlay.classList.add('hidden');
+            if (activeGuide) activeGuide.classList.remove('hidden');
+            if (toggleBtnText) toggleBtnText.textContent = 'Hentikan Kamera Scanner';
+            if (statusEl) {
+                statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span class="text-emerald-600 font-bold">Kamera aktif • Siap memindai QR tamu</span>`;
+            }
+
+            showAdminToast('Kamera scanner aktif! 📸');
+        } catch (err) {
+            console.error('Start scanner error:', err);
+            alert('Tidak dapat mengakses kamera: ' + (err.message || err) + '\nPastikan izin kamera telah diberikan di browser.');
+            if (statusEl) {
+                statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500"></span><span class="text-rose-500">Akses kamera gagal</span>`;
+            }
+        }
+    }
+
+    async function stopQrScanner() {
+        if (html5QrCode && isScannerRunning) {
+            try {
+                await html5QrCode.stop();
+            } catch (e) {
+                console.warn('Error stopping scanner:', e);
+            }
+        }
+        isScannerRunning = false;
+
+        const idleOverlay = document.getElementById('qr-idle-overlay');
+        const activeGuide = document.getElementById('qr-active-guide');
+        const statusEl = document.getElementById('scanner-status');
+        const toggleBtnText = document.getElementById('scanner-toggle-text');
+
+        if (idleOverlay) idleOverlay.classList.remove('hidden');
+        if (activeGuide) activeGuide.classList.add('hidden');
+        if (toggleBtnText) toggleBtnText.textContent = 'Buka Kamera Scanner';
+        if (statusEl) {
+            statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-gray-400"></span><span>Status scanner: Standby</span>`;
+        }
+    }
+
+    function toggleAttendanceScanner() {
+        if (isScannerRunning) {
+            stopQrScanner();
+        } else {
+            startQrScanner();
+        }
+    }
+
+    async function switchScannerCamera() {
+        if (!isScannerRunning || availableCameras.length <= 1) {
+            showAdminToast('Hanya 1 kamera yang terdeteksi');
+            return;
+        }
+        currentCameraIndex = (currentCameraIndex + 1) % availableCameras.length;
+        await stopQrScanner();
+        await startQrScanner();
+    }
+
+    function handleQrScanResult(decodedText) {
+        const now = Date.now();
+        if (decodedText === lastScannedText && (now - lastScanTime < 3000)) {
+            return;
+        }
+        lastScannedText = decodedText;
+        lastScanTime = now;
+
+        const parsed = parseQrPayload(decodedText);
+        if (parsed && parsed.name) {
+            addAttendanceRecord(parsed.name, 'qr', parsed.code);
+        } else {
+            showAdminToast('Format QR tidak dikenali: ' + decodedText);
+        }
+    }
+
+    function exportAttendanceCsv() {
+        loadAttendance();
+        if (attendanceList.length === 0) {
+            showAdminToast('Belum ada data presensi untuk diexport');
+            return;
+        }
+
+        const dataToExport = attendanceList.map((item, idx) => ({
+            'No': idx + 1,
+            'Nama Tamu': item.name,
+            'Waktu Kehadiran': formatDate(item.timestamp),
+            'Metode': item.method === 'qr' ? 'QR Code Scanner' : 'Input Manual',
+            'Kode Tiket': item.code || '-'
+        }));
+
+        exportCSV(dataToExport, `Buku-Tamu-Presensi-Rizky-Isla-${new Date().toISOString().split('T')[0]}.csv`);
     }
 
     // ==================== SIDEBAR ====================

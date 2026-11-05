@@ -54,6 +54,8 @@
                     fontFamily: {
                         'display': ['Playfair Display', 'serif'],
                         'script': ['Great Vibes', 'cursive'],
+                        'brush': ['Alex Brush', 'cursive'],
+                        'pinyon': ['Pinyon Script', 'cursive'],
                         'body': ['Cormorant Garamond', 'serif'],
                         'sans': ['Outfit', 'sans-serif'],
                     },
@@ -66,7 +68,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Outfit:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Alex+Brush&family=Pinyon+Script&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Outfit:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
     <!-- Lucide Icons -->
@@ -75,6 +77,9 @@
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+    <!-- QRCode JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -86,7 +91,7 @@
 
     <!-- ==================== MUSIC TOGGLE ==================== -->
     <button id="music-toggle"
-        class="fixed bottom-24 right-5 z-[90] w-12 h-12 rounded-full bg-royal-800/90 backdrop-blur-md text-gold-300 border border-gold-400/50 flex items-center justify-center shadow-xl shadow-royal-950/40 hover:bg-royal-700 transition-all duration-300 hover:scale-105"
+        class="fixed bottom-24 right-5 z-[90] w-12 h-12 rounded-full bg-gradient-to-tr from-[#4f96e6] to-[#6ba8ed] text-white border border-sky-200/60 flex items-center justify-center shadow-xl shadow-sky-900/30 hover:scale-105 transition-all duration-300"
         onclick="toggleMusic()" aria-label="Toggle Music">
         <i data-lucide="music" class="w-5 h-5 animate-spin-slow" id="music-icon-on" style="display:none;"></i>
         <i data-lucide="music-2" class="w-5 h-5" id="music-icon-off" style="display:block;"></i>
@@ -96,59 +101,80 @@
         <source src="assets/music/SABILULUNGAN%20SUNDANESE%20INSTRUMENTALIA%20DEGUNG%20SUNDA%20INDONESIAN%20TRADITIONAL%20MUSIC%20(1).mp3#t=10" type="audio/mpeg">
     </audio>
 
-    <!-- ==================== COVER / OPENING PAGE (Enriched with Blue Roses) ==================== -->
+    <!-- ==================== COVER / OPENING PAGE (Clean Sky Background, Hiasan di Ujung, Tanpa Card Putih) ==================== -->
     <section id="cover"
-        class="fixed inset-0 z-[100] flex items-center justify-center bg-gradient-to-br from-royal-950 via-royal-900 to-royal-800 transition-all duration-700">
-        <!-- Background Overlay with Blue Rose Corner Ornaments and sparkles -->
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <!-- Blue Rose Floral Corner Top-Left (Tucked tightly into corner) -->
-            <div
-                class="absolute -top-7 -left-7 sm:-top-10 sm:-left-10 w-44 sm:w-56 h-44 sm:h-56 pointer-events-none select-none z-10 scale-x-[-1]">
-                <img src="assets/images/bunga.png" alt=""
-                    class="w-full h-full object-contain filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
-            </div>
-            <!-- Blue Rose Floral Corner Bottom-Right (Tucked tightly into corner) -->
-            <div
-                class="absolute -bottom-7 -right-7 sm:-bottom-10 sm:-right-10 w-44 sm:w-56 h-44 sm:h-56 pointer-events-none select-none z-10 scale-y-[-1]">
-                <img src="assets/images/bunga.png" alt=""
-                    class="w-full h-full object-contain filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
-            </div>
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-y-auto overflow-x-hidden transition-all duration-700">
+        <!-- Background Image Container: assets/images/backgoud.jpg -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none select-none">
+            <img src="assets/images/backgoud.jpg" alt="Wedding Cover Background"
+                class="w-full h-full object-cover object-center">
 
-            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-80 h-80 bg-royal-500/20 rounded-full blur-3xl">
+            <!-- Hiasan Bunga Pas di Ujung Sudut Layar -->
+            <div
+                class="absolute -top-7 -left-7 sm:-top-10 sm:-left-10 w-40 sm:w-52 h-40 sm:h-52 pointer-events-none select-none z-10 scale-x-[-1]">
+                <img src="assets/images/bunga.png" alt="" class="w-full h-full object-contain">
             </div>
-            <div class="sparkle-container absolute inset-0"></div>
+            <div
+                class="absolute -bottom-7 -right-7 sm:-bottom-10 sm:-right-10 w-40 sm:w-52 h-40 sm:h-52 pointer-events-none select-none z-10 scale-y-[-1]">
+                <img src="assets/images/bunga.png" alt="" class="w-full h-full object-contain">
+            </div>
         </div>
 
-        <div class="text-center relative z-10 px-6 max-w-md mx-auto py-10">
-            <p class="font-sans text-gold-400 tracking-[0.45em] uppercase text-xs md:text-sm font-semibold mb-2">The
-                Wedding Of</p>
+        <!-- Inner Content (Proporsional, Elegan dengan Aksen Biru Muda & Putih Senada Background) -->
+        <div class="relative z-10 w-full max-w-sm mx-auto flex flex-col items-center text-center pt-2 pb-6 my-auto -translate-y-2 sm:-translate-y-4">
 
-            <!-- Groom & Bride Short Names -->
-            <h1 class="font-script text-5xl md:text-7xl text-white mb-2 drop-shadow-lg">
-                Rizky <span class="text-gold-400 font-normal">&</span> Isla
-            </h1>
-            <p class="font-sans text-xs text-royal-200 tracking-wider mb-4">Rizky Abdul Azis & Isla Nurmila</p>
-
-            <div class="flex items-center justify-center gap-3 my-4">
-                <div class="w-12 h-[1px] bg-gradient-to-r from-transparent to-gold-400"></div>
-                <i data-lucide="heart" class="w-3.5 h-3.5 text-gold-400 fill-gold-400"></i>
-                <div class="w-12 h-[1px] bg-gradient-to-l from-transparent to-gold-400"></div>
+            <!-- 1. Pill Badge: THE WEDDING CELEBRATION OF (Sentuhan Biru Muda Lembut) -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-500/20 backdrop-blur-md border border-sky-200/50 shadow-sm mb-3">
+                <span class="w-1.5 h-1.5 rounded-full bg-sky-300"></span>
+                <span class="font-sans text-[10px] sm:text-[11px] font-bold tracking-[0.25em] uppercase text-sky-100 drop-shadow-sm">
+                    THE WEDDING CELEBRATION OF
+                </span>
+                <span class="w-1.5 h-1.5 rounded-full bg-sky-300"></span>
             </div>
 
-            <p class="font-body text-base text-royal-100 mb-1">
-                Kepada Yth. Bapak/Ibu/Saudara/i
-            </p>
-            <p class="font-display text-2xl md:text-3xl text-gold-300 font-semibold mb-7 tracking-wide drop-shadow-sm"
-                id="guest-name">
-                Tamu Undangan
-            </p>
+            <!-- 2. Hero Couple Names (Font Kaligrafi Anggun Alex Brush yang Mengalir Lembut) -->
+            <h1 class="font-brush text-5xl sm:text-6xl md:text-7xl text-white tracking-wide mb-1 leading-tight drop-shadow-[0_2px_8px_rgba(0,30,80,0.4)]">
+                Rizky <span class="font-serif italic font-normal text-3xl sm:text-4xl text-amber-200 mx-1 drop-shadow-sm">&amp;</span> Isla
+            </h1>
 
+            <!-- 3. Date Line dengan Garis Putih Bersih Memudar -->
+            <div class="flex items-center justify-center gap-3 w-full max-w-[270px] my-2">
+                <div class="flex-1 h-[1px] bg-gradient-to-r from-transparent via-white/80 to-white/90"></div>
+                <span class="font-sans text-[11px] font-bold tracking-[0.2em] uppercase text-sky-100 drop-shadow-[0_1px_4px_rgba(0,25,70,0.35)]">
+                    JUMAT, 8 JANUARI 2027
+                </span>
+                <div class="flex-1 h-[1px] bg-gradient-to-l from-transparent via-white/80 to-white/90"></div>
+            </div>
+
+            <!-- 4. Area Penerima Undangan: Kontras Alami Berlatar Langit Biru Lembut (Jelas Terbaca, Tanpa Shadow Gelap & Tanpa Blur) -->
+            <div class="w-full max-w-[310px] my-3 px-3 py-2.5 rounded-2xl bg-gradient-to-r from-transparent via-[#0d2a52]/25 to-transparent backdrop-blur-[1.5px]">
+                <!-- Garis Menghilang di Atas (Putih Bersih) -->
+                <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-white/90 to-transparent mb-3"></div>
+
+                <p class="font-body italic text-base sm:text-lg text-white font-medium tracking-wide mb-1">
+                    Kepada Yth. Bapak/Ibu/Saudara/i:
+                </p>
+
+                <h2 id="guest-name" class="font-display text-2xl sm:text-3xl font-bold text-white tracking-wide my-1">
+                    Tamu Undangan
+                </h2>
+
+                <p class="font-body italic text-sm text-white/95 mt-1">
+                    di Tempat
+                </p>
+
+                <!-- Garis Menghilang di Bawah (Putih Bersih) -->
+                <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-white/90 to-transparent mt-3"></div>
+            </div>
+
+            <!-- 5. Tombol Buka Undangan Bernuansa Biru Muda Langit yang Elegan -->
             <button onclick="openInvitation()"
-                class="group relative inline-flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-gold-500 via-gold-400 to-gold-500 text-royal-950 font-sans font-bold text-sm tracking-wider rounded-full shadow-2xl shadow-gold-500/30 hover:shadow-gold-500/60 transition-all duration-300 hover:scale-105 active:scale-95">
-                <i data-lucide="mail-open"
-                    class="w-4 h-4 text-royal-950 transition-transform group-hover:rotate-12"></i>
-                <span>Buka Undangan</span>
+                class="w-full max-w-[260px] group relative inline-flex items-center justify-center gap-2.5 py-3 px-6 bg-gradient-to-r from-[#4f96e6] via-[#6ba8ed] to-[#4f96e6] hover:from-[#3e8ce0] hover:to-[#5e9fe8] text-white font-sans font-bold text-xs sm:text-sm tracking-wider uppercase rounded-full shadow-lg shadow-sky-600/35 active:scale-95 transition-all duration-300 border border-sky-200/60">
+                <i data-lucide="mail" class="w-4 h-4 text-white transition-transform group-hover:scale-110"></i>
+                <span>BUKA UNDANGAN</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-white/90 transition-transform group-hover:translate-x-1"></i>
             </button>
+
         </div>
     </section>
 
@@ -207,163 +233,211 @@
                         Jumat, 8 Januari 2027
                     </p>
 
-                    <!-- Location Pill (Deep Royal Blue with gold pin) -->
+                    <!-- Location Pill (Frosted Glass Mewah Senada) -->
                     <div
-                        class="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-full bg-[#081a4b]/85 backdrop-blur-md text-white font-sans text-xs sm:text-sm mt-2.5 border border-gold-400/40 shadow-lg">
-                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-gold-400"></i>
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-full bg-white/20 backdrop-blur-md text-white font-sans text-xs sm:text-sm mt-2.5 border border-white/35 shadow-lg">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-white"></i>
                         <span class="font-medium tracking-wide">Rumah Mempelai Wanita</span>
                     </div>
                 </div>
 
-                <!-- BOTTOM BLOCK: Countdown Cards (Desain Royal Navy Glassmorphism) -->
-                <div data-aos="fade-up" data-aos-delay="300" class="w-full">
-                    <div
-                        class="inline-flex items-center justify-center gap-2 sm:gap-3.5 px-4 sm:px-6 py-2 rounded-full bg-[#081a4b]/80 backdrop-blur-md border border-gold-400/40 shadow-xl shadow-royal-950/50 mx-auto mb-2 text-white">
-                        <div class="flex flex-col items-center min-w-[38px] sm:min-w-[48px]">
+                <!-- BOTTOM BLOCK: 4 Modern Frosted Glass Countdown Tiles -->
+                <div data-aos="fade-up" data-aos-delay="300" class="w-full pb-2">
+                    <div class="grid grid-cols-4 gap-2 sm:gap-2.5 max-w-[280px] sm:max-w-[320px] mx-auto mb-2">
+                        <!-- Hari -->
+                        <div class="bg-white/15 backdrop-blur-md rounded-2xl py-2 px-1 border border-white/30 shadow-lg shadow-blue-950/20 text-center flex flex-col items-center justify-center">
                             <span id="countdown-days"
-                                class="font-display text-xl sm:text-2xl font-bold text-gold-300 leading-none">00</span>
+                                class="font-sans text-xl sm:text-2xl font-bold text-white leading-none block">00</span>
                             <span
-                                class="font-sans text-[8px] sm:text-[9px] text-royal-200 uppercase tracking-widest font-bold mt-0.5">Hari</span>
+                                class="font-sans text-[8px] sm:text-[9px] uppercase tracking-wider text-sky-100 font-semibold mt-1 block">Hari</span>
                         </div>
-                        <div class="w-[1px] h-6 bg-gold-400/35"></div>
-                        <div class="flex flex-col items-center min-w-[38px] sm:min-w-[48px]">
+
+                        <!-- Jam -->
+                        <div class="bg-white/15 backdrop-blur-md rounded-2xl py-2 px-1 border border-white/30 shadow-lg shadow-blue-950/20 text-center flex flex-col items-center justify-center">
                             <span id="countdown-hours"
-                                class="font-display text-xl sm:text-2xl font-bold text-gold-300 leading-none">00</span>
+                                class="font-sans text-xl sm:text-2xl font-bold text-white leading-none block">00</span>
                             <span
-                                class="font-sans text-[8px] sm:text-[9px] text-royal-200 uppercase tracking-widest font-bold mt-0.5">Jam</span>
+                                class="font-sans text-[8px] sm:text-[9px] uppercase tracking-wider text-sky-100 font-semibold mt-1 block">Jam</span>
                         </div>
-                        <div class="w-[1px] h-6 bg-gold-400/35"></div>
-                        <div class="flex flex-col items-center min-w-[38px] sm:min-w-[48px]">
+
+                        <!-- Menit -->
+                        <div class="bg-white/15 backdrop-blur-md rounded-2xl py-2 px-1 border border-white/30 shadow-lg shadow-blue-950/20 text-center flex flex-col items-center justify-center">
                             <span id="countdown-minutes"
-                                class="font-display text-xl sm:text-2xl font-bold text-gold-300 leading-none">00</span>
+                                class="font-sans text-xl sm:text-2xl font-bold text-white leading-none block">00</span>
                             <span
-                                class="font-sans text-[8px] sm:text-[9px] text-royal-200 uppercase tracking-widest font-bold mt-0.5">Menit</span>
+                                class="font-sans text-[8px] sm:text-[9px] uppercase tracking-wider text-sky-100 font-semibold mt-1 block">Menit</span>
                         </div>
-                        <div class="w-[1px] h-6 bg-gold-400/35"></div>
-                        <div class="flex flex-col items-center min-w-[38px] sm:min-w-[48px]">
+
+                        <!-- Detik -->
+                        <div class="bg-white/15 backdrop-blur-md rounded-2xl py-2 px-1 border border-white/30 shadow-lg shadow-blue-950/20 text-center flex flex-col items-center justify-center">
                             <span id="countdown-seconds"
-                                class="font-display text-xl sm:text-2xl font-bold text-gold-300 leading-none">00</span>
+                                class="font-sans text-xl sm:text-2xl font-bold text-white leading-none block">00</span>
                             <span
-                                class="font-sans text-[8px] sm:text-[9px] text-royal-200 uppercase tracking-widest font-bold mt-0.5">Detik</span>
+                                class="font-sans text-[8px] sm:text-[9px] uppercase tracking-wider text-sky-100 font-semibold mt-1 block">Detik</span>
                         </div>
                     </div>
 
                     <!-- Chevron Indicator -->
                     <div class="animate-bounce">
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-gold-300/90 mx-auto"></i>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-white/80 mx-auto drop-shadow"></i>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ==================== QURAN VERSE (Full-width Blue Background, No Card) ==================== -->
+        <!-- ==================== QURAN VERSE (Sesuai Persis Gambar Referensi User) ==================== -->
         <section
-            class="py-16 md:py-20 bg-gradient-to-b from-[#0035C0] via-[#040d28] to-[#081a4b] text-white text-center px-6 relative overflow-hidden">
-            <!-- Ambient soft glow -->
+            class="py-14 sm:py-20 bg-gradient-to-b from-[#eaf2fc] via-[#f1f6fd] to-[#f8faff] text-center px-4 sm:px-6 relative overflow-hidden">
+            <!-- Hiasan Bunga Lembut di Kiri Atas & Kanan Bawah (Sesuai Referensi) -->
             <div
-                class="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-royal-500/15 rounded-full blur-3xl pointer-events-none">
+                class="absolute -top-6 -left-6 sm:-top-8 sm:-left-8 w-36 sm:w-52 h-36 sm:h-52 pointer-events-none select-none z-0 scale-x-[-1] opacity-75">
+                <img src="assets/images/bunga.png" alt="" class="w-full h-full object-contain">
+            </div>
+            <div
+                class="absolute -bottom-6 -right-6 sm:-bottom-8 sm:-right-8 w-36 sm:w-52 h-36 sm:h-52 pointer-events-none select-none z-0 scale-y-[-1] opacity-75">
+                <img src="assets/images/bunga.png" alt="" class="w-full h-full object-contain">
             </div>
 
-            <div class="max-w-xl mx-auto relative z-10" data-aos="fade-up">
+            <!-- Floating White Card Presisi Sesuai Referensi -->
+            <div class="max-w-md mx-auto relative z-10 pt-4" data-aos="fade-up">
                 <div
-                    class="w-12 h-12 rounded-full bg-royal-800/80 text-gold-300 flex items-center justify-center mx-auto mb-6 shadow-md border border-gold-400/40">
-                    <i data-lucide="heart" class="w-5 h-5 fill-gold-400 text-gold-300"></i>
-                </div>
+                    class="relative bg-white/95 backdrop-blur-sm rounded-[28px] pt-10 pb-8 px-6 sm:px-9 shadow-xl shadow-blue-950/8 border border-sky-100/80 text-center">
 
-                <p
-                    class="font-body text-xl md:text-2xl text-white/95 italic leading-relaxed mb-6 font-medium drop-shadow-sm">
-                    "Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari
-                    jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu
-                    rasa kasih dan sayang."
-                </p>
+                    <!-- Hiasan 2 di Atas Card Sesuai Permintaan -->
+                    <div
+                        class="absolute -top-9 sm:-top-11 left-1/2 -translate-x-1/2 w-28 sm:w-36 pointer-events-none select-none z-10">
+                        <img src="assets/images/hiasan2.png" alt="Hiasan 2"
+                            class="w-full h-auto object-contain drop-shadow-sm">
+                    </div>
 
-                <div class="w-20 h-[1.5px] bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto mb-3">
+                    <!-- AR-RUM : 21 -->
+                    <p class="font-sans text-xs sm:text-[13px] tracking-[0.25em] uppercase text-[#335384] font-bold mb-4">
+                        AR-RUM : 21
+                    </p>
+
+                    <!-- Quote Text -->
+                    <p class="font-body text-base sm:text-lg text-[#22395e] italic leading-relaxed sm:leading-loose mb-6">
+                        &ldquo;Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu
+                        dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di
+                        antaramu rasa kasih dan sayang.&rdquo;
+                    </p>
+
+                    <!-- Bottom Divider Line (Garis Halus Tanpa Ikon) -->
+                    <div class="w-24 sm:w-28 h-[1px] bg-gradient-to-r from-transparent via-[#93b4d7]/70 to-transparent mx-auto"></div>
+
                 </div>
-                <p class="font-sans text-xs sm:text-sm tracking-[0.25em] uppercase text-gold-400 font-bold">QS. Ar-Rum:
-                    21</p>
             </div>
         </section>
 
-        <!-- ==================== COUPLE SECTION (Side-by-Side Horizontal Layout as requested) ==================== -->
-        <section id="couple" class="py-16 md:py-24 bg-white relative overflow-hidden">
-            <!-- Symmetrical Floral Header Arch (Teratur & Rapi: Kiri & Kanan Simetris) -->
+        <!-- ==================== COUPLE SECTION (Side-by-Side Berdampingan Menyatu dengan Background) ==================== -->
+        <section id="couple" class="py-16 md:py-24 bg-gradient-to-b from-[#f8faff] via-[#eaf2fc] to-[#f0f5fe] relative overflow-hidden">
+            <!-- Bunga Dekorasi Kanan Atas & Kiri Bawah Sesuai Gambar Referensi -->
             <div
-                class="absolute -top-5 -left-5 sm:-top-8 sm:-left-8 w-28 h-28 sm:w-44 sm:h-44 pointer-events-none select-none opacity-35 md:opacity-40 z-0 scale-x-[-1]">
+                class="absolute top-8 -right-6 sm:top-6 sm:-right-8 w-36 sm:w-52 h-36 sm:h-52 pointer-events-none select-none opacity-65 z-0">
                 <img src="assets/images/bunga.png" alt=""
-                    class="w-full h-full object-contain filter drop-shadow-[0_2px_8px_rgba(30,58,138,0.12)]">
+                    class="w-full h-full object-contain filter drop-shadow-[0_2px_8px_rgba(30,58,138,0.08)]">
             </div>
             <div
-                class="absolute -top-5 -right-5 sm:-top-8 sm:-right-8 w-28 h-28 sm:w-44 sm:h-44 pointer-events-none select-none opacity-35 md:opacity-40 z-0">
+                class="absolute -bottom-8 -left-6 sm:-bottom-10 sm:-left-8 w-36 sm:w-52 h-36 sm:h-52 pointer-events-none select-none opacity-65 z-0 scale-x-[-1] scale-y-[-1]">
                 <img src="assets/images/bunga.png" alt=""
-                    class="w-full h-full object-contain filter drop-shadow-[0_2px_8px_rgba(30,58,138,0.12)]">
+                    class="w-full h-full object-contain filter drop-shadow-[0_2px_8px_rgba(30,58,138,0.08)]">
             </div>
+
             <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
-                <div class="text-center mb-12" data-aos="fade-up">
-                    <p class="font-script text-3xl text-gold-500 mb-1">Mempelai</p>
-                    <h2 class="font-display text-3xl md:text-4xl font-bold text-royal-900">Kedua Mempelai</h2>
-                    <div class="w-16 h-[2px] bg-gold-400 mx-auto mt-3"></div>
-                    <p class="font-body text-base text-royal-600 mt-2">Dengan memohon rahmat dan ridho Allah SWT:</p>
+                <!-- Section Header (Sesuai Persis Teks & Tipografi Gambar Referensi) -->
+                <div class="text-center mb-10 sm:mb-12" data-aos="fade-up">
+                    <p class="font-sans text-[11px] sm:text-xs tracking-[0.25em] uppercase text-[#335384] font-bold mb-2">
+                        ASSALAMU'ALAIKUM WR. WB.
+                    </p>
+                    <h2 class="font-display text-3xl sm:text-4xl font-bold text-[#1a2b48] tracking-tight">
+                        Mempelai Bahagia
+                    </h2>
+                    <div class="w-16 sm:w-20 h-[1.5px] bg-gradient-to-r from-transparent via-sky-300 to-transparent mx-auto mt-2.5 mb-3.5"></div>
+                    <p class="font-body text-xs sm:text-sm text-slate-600 italic max-w-md mx-auto leading-relaxed">
+                        Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud mengikrarkan janji suci pernikahan putra-putri kami:
+                    </p>
                 </div>
 
-                <!-- Side-by-Side 2 Column Layout (Saling Berdampingan di Mobile & Desktop) -->
+                <!-- Side-by-Side 2 Column Layout (Berdampingan Simetris & Rapi Presisi) -->
                 <div class="grid grid-cols-2 gap-3 sm:gap-8 max-w-2xl mx-auto items-start">
 
                     <!-- Groom: Rizky Abdul Azis -->
-                    <div class="text-center" data-aos="fade-right" data-aos-delay="150">
+                    <div class="text-center flex flex-col items-center" data-aos="fade-right" data-aos-delay="150">
+                        <!-- Bingkai Kubah / Arch Elegan -->
                         <div class="relative inline-block mb-3">
                             <div
-                                class="w-32 h-32 sm:w-48 sm:h-48 rounded-full overflow-hidden p-1 sm:p-1.5 bg-gradient-to-tr from-gold-400 via-royal-500 to-gold-500 shadow-xl mx-auto">
+                                class="w-28 h-36 sm:w-44 sm:h-56 rounded-t-full rounded-b-2xl overflow-hidden p-1 bg-gradient-to-b from-sky-200 via-white to-sky-300 shadow-lg shadow-sky-950/10 mx-auto group">
                                 <img src="assets/images/adul.jpeg" alt="Rizky Abdul Azis"
-                                    class="w-full h-full object-cover object-[50%_18%] rounded-full hover:scale-105 transition-transform duration-500">
+                                    class="w-full h-full object-cover object-[50%_15%] rounded-t-full rounded-b-2xl group-hover:scale-105 transition-transform duration-500">
                             </div>
                         </div>
 
-                        <span
-                            class="inline-block bg-royal-800 text-gold-300 font-sans font-semibold px-3 py-0.5 rounded-full text-[10px] sm:text-xs mb-2 border border-gold-400/40">
-                            Mempelai Pria
-                        </span>
+                        <!-- Pill Badge -->
+                        <div class="mb-2">
+                            <span
+                                class="inline-block bg-sky-50 text-[#1e4e8c] font-sans font-semibold px-2.5 sm:px-3.5 py-0.5 rounded-full text-[10px] sm:text-xs border border-sky-200/90 shadow-xs whitespace-nowrap">
+                                Mempelai Pria
+                            </span>
+                        </div>
 
-                        <h3 class="font-script text-2xl sm:text-4xl text-royal-950 font-bold leading-tight">Rizky Abdul
-                            Azis</h3>
-                        <p class="font-body text-xs sm:text-sm text-royal-600 italic mt-1">Putra dari</p>
-                        <p class="font-sans text-xs sm:text-sm text-royal-900 font-semibold">Bpk. Ma'mun Hasan</p>
-                        <p class="font-sans text-[10px] text-gold-600 my-0.5">&</p>
-                        <p class="font-sans text-xs sm:text-sm text-royal-900 font-semibold">Ibu Ane</p>
+                        <!-- Nama (Tegas, Jelas, Mewah & Terbaca Sempurna) -->
+                        <div class="h-9 sm:h-12 flex items-center justify-center px-1">
+                            <h3 class="font-display text-[17px] min-[390px]:text-[19px] sm:text-2xl md:text-3xl font-bold text-[#0e2748] tracking-tight leading-none whitespace-nowrap drop-shadow-2xs">
+                                Rizky Abdul Azis
+                            </h3>
+                        </div>
 
-
+                        <!-- Info Orang Tua (Sejajar Sempurna) -->
+                        <div class="mt-2 text-center">
+                            <p class="font-body text-[11px] sm:text-xs text-slate-500 italic mb-1">Putra dari:</p>
+                            <p class="font-sans text-xs sm:text-sm text-slate-700 font-semibold tracking-tight">Bpk. Ma'mun Hasan</p>
+                            <p class="font-serif italic text-xs sm:text-sm text-sky-500 my-0.5">&amp;</p>
+                            <p class="font-sans text-xs sm:text-sm text-slate-700 font-semibold tracking-tight">Ibu Ane</p>
+                        </div>
                     </div>
 
                     <!-- Bride: Isla Nurmila -->
-                    <div class="text-center" data-aos="fade-left" data-aos-delay="300">
+                    <div class="text-center flex flex-col items-center" data-aos="fade-left" data-aos-delay="300">
+                        <!-- Bingkai Kubah / Arch Elegan -->
                         <div class="relative inline-block mb-3">
                             <div
-                                class="w-32 h-32 sm:w-48 sm:h-48 rounded-full overflow-hidden p-1 sm:p-1.5 bg-gradient-to-tr from-gold-400 via-royal-500 to-gold-500 shadow-xl mx-auto">
+                                class="w-28 h-36 sm:w-44 sm:h-56 rounded-t-full rounded-b-2xl overflow-hidden p-1 bg-gradient-to-b from-sky-200 via-white to-sky-300 shadow-lg shadow-sky-950/10 mx-auto group">
                                 <img src="assets/images/isla.jpeg" alt="Isla Nurmila"
-                                    class="w-full h-full object-cover object-[50%_18%] rounded-full hover:scale-105 transition-transform duration-500">
+                                    class="w-full h-full object-cover object-[50%_15%] rounded-t-full rounded-b-2xl group-hover:scale-105 transition-transform duration-500">
                             </div>
                         </div>
 
-                        <span
-                            class="inline-block bg-royal-800 text-gold-300 font-sans font-semibold px-3 py-0.5 rounded-full text-[10px] sm:text-xs mb-2 border border-gold-400/40">
-                            Mempelai Wanita
-                        </span>
+                        <!-- Pill Badge -->
+                        <div class="mb-2">
+                            <span
+                                class="inline-block bg-sky-50 text-[#1e4e8c] font-sans font-semibold px-2.5 sm:px-3.5 py-0.5 rounded-full text-[10px] sm:text-xs border border-sky-200/90 shadow-xs whitespace-nowrap">
+                                Mempelai Wanita
+                            </span>
+                        </div>
 
-                        <h3 class="font-script text-2xl sm:text-4xl text-royal-950 font-bold leading-tight">Isla Nurmila
-                        </h3>
-                        <p class="font-body text-xs sm:text-sm text-royal-600 italic mt-1">Putri dari</p>
-                        <p class="font-sans text-xs sm:text-sm text-royal-900 font-semibold">Bpk. Iis Sutisna</p>
-                        <p class="font-sans text-[10px] text-gold-600 my-0.5">&</p>
-                        <p class="font-sans text-xs sm:text-sm text-royal-900 font-semibold">Ibu Yeyen</p>
+                        <!-- Nama (Tegas, Jelas, Mewah & Terbaca Sempurna) -->
+                        <div class="h-9 sm:h-12 flex items-center justify-center px-1">
+                            <h3 class="font-display text-[17px] min-[390px]:text-[19px] sm:text-2xl md:text-3xl font-bold text-[#0e2748] tracking-tight leading-none whitespace-nowrap drop-shadow-2xs">
+                                Isla Nurmila
+                            </h3>
+                        </div>
 
-
+                        <!-- Info Orang Tua (Sejajar Sempurna) -->
+                        <div class="mt-2 text-center">
+                            <p class="font-body text-[11px] sm:text-xs text-slate-500 italic mb-1">Putri dari:</p>
+                            <p class="font-sans text-xs sm:text-sm text-slate-700 font-semibold tracking-tight">Bpk. Iis Sutisna</p>
+                            <p class="font-serif italic text-xs sm:text-sm text-sky-500 my-0.5">&amp;</p>
+                            <p class="font-sans text-xs sm:text-sm text-slate-700 font-semibold tracking-tight">Ibu Yeyen</p>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </section>
 
         <!-- ==================== COUNTDOWN SECTION (Di Antara Mempelai & Acara) ==================== -->
         <section id="countdown-section"
-            class="py-14 md:py-20 bg-gradient-to-b from-white via-[#f0f5ff] to-white relative overflow-hidden px-4 sm:px-6">
+            class="py-14 md:py-20 bg-gradient-to-b from-[#f0f5fe] via-[#eaf2fc] to-white relative overflow-hidden px-4 sm:px-6">
             <!-- Symmetrical Floral Header Arch (Teratur & Rapi: Kiri & Kanan Simetris) -->
             <div
                 class="absolute -top-5 -left-5 sm:-top-8 sm:-left-8 w-28 h-28 sm:w-44 sm:h-44 pointer-events-none select-none opacity-35 md:opacity-40 z-0 scale-x-[-1]">
@@ -377,64 +451,63 @@
             </div>
             <div class="max-w-lg mx-auto text-center relative z-10" data-aos="fade-up">
 
-                <p class="font-script text-3xl sm:text-4xl text-gold-500 mb-1">Menghitung Hari</p>
-                <h2 class="font-display text-2xl sm:text-3xl font-bold text-royal-950 tracking-wide">
+                <p class="font-script text-3xl sm:text-4xl text-sky-600 mb-1">Menghitung Hari</p>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-[#1a2b48] tracking-wide">
                     Menuju Hari Bahagia
                 </h2>
                 <div class="flex items-center justify-center gap-2 my-2.5">
-                    <div class="w-10 h-[1.5px] bg-gradient-to-r from-transparent to-gold-400"></div>
-                    <i data-lucide="heart" class="w-3.5 h-3.5 text-gold-400 fill-gold-400"></i>
-                    <div class="w-10 h-[1.5px] bg-gradient-to-l from-transparent to-gold-400"></div>
+                    <div class="w-10 h-[1.5px] bg-gradient-to-r from-transparent to-sky-300"></div>
+                    <i data-lucide="heart" class="w-3.5 h-3.5 text-sky-400 fill-sky-400"></i>
+                    <div class="w-10 h-[1.5px] bg-gradient-to-l from-transparent to-sky-300"></div>
                 </div>
-                <p class="font-sans text-xs sm:text-sm text-royal-600 font-medium mb-6">
+                <p class="font-sans text-xs sm:text-sm text-slate-600 font-medium mb-6">
                     Jumat, 8 Januari 2027 • 09.00 WIB
                 </p>
 
-                <!-- Luxury Unified Countdown Card (Tanpa Kotak-Kotak Kasar, Garis Pembatas Emas Mewah) -->
-                <div
-                    class="bg-gradient-to-br from-[#081a4b] via-[#040d28] to-[#081a4b] rounded-3xl p-5 sm:p-7 shadow-2xl border border-gold-400/40 relative overflow-hidden">
-                    <!-- Subtle ambient lighting -->
-                    <div
-                        class="absolute -top-12 -right-12 w-32 h-32 bg-royal-500/20 rounded-full blur-2xl pointer-events-none">
-                    </div>
-                    <div
-                        class="absolute -bottom-12 -left-12 w-32 h-32 bg-gold-400/15 rounded-full blur-2xl pointer-events-none">
-                    </div>
-
-                    <div
-                        class="flex items-center justify-around divide-x divide-gold-400/30 py-2 sm:py-3 relative z-10">
+                <!-- Countdown Timer (Tanpa Card / Minimalis Elegan Menyatu Langsung dengan Background) -->
+                <div class="max-w-md mx-auto relative z-10 my-6" data-aos="zoom-in" data-aos-delay="150">
+                    <div class="flex items-center justify-center divide-x divide-sky-300/60 py-2">
                         <!-- Hari -->
-                        <div class="flex-1 flex flex-col items-center justify-center px-1">
+                        <div class="flex-1 flex flex-col items-center justify-center px-2">
                             <span id="countdown-days-mid"
-                                class="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-gold-300 leading-none drop-shadow">00</span>
+                                class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-[#1a2b48] leading-none mb-1.5 drop-shadow-2xs">00</span>
                             <span
-                                class="font-sans text-[10px] sm:text-xs text-royal-200 uppercase tracking-widest font-semibold mt-1.5">Hari</span>
+                                class="font-sans text-[10px] sm:text-xs text-sky-700 uppercase tracking-widest font-bold">Hari</span>
                         </div>
 
                         <!-- Jam -->
-                        <div class="flex-1 flex flex-col items-center justify-center px-1">
+                        <div class="flex-1 flex flex-col items-center justify-center px-2">
                             <span id="countdown-hours-mid"
-                                class="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-gold-300 leading-none drop-shadow">00</span>
+                                class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-[#1a2b48] leading-none mb-1.5 drop-shadow-2xs">00</span>
                             <span
-                                class="font-sans text-[10px] sm:text-xs text-royal-200 uppercase tracking-widest font-semibold mt-1.5">Jam</span>
+                                class="font-sans text-[10px] sm:text-xs text-sky-700 uppercase tracking-widest font-bold">Jam</span>
                         </div>
 
                         <!-- Menit -->
-                        <div class="flex-1 flex flex-col items-center justify-center px-1">
+                        <div class="flex-1 flex flex-col items-center justify-center px-2">
                             <span id="countdown-minutes-mid"
-                                class="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-gold-300 leading-none drop-shadow">00</span>
+                                class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-[#1a2b48] leading-none mb-1.5 drop-shadow-2xs">00</span>
                             <span
-                                class="font-sans text-[10px] sm:text-xs text-royal-200 uppercase tracking-widest font-semibold mt-1.5">Menit</span>
+                                class="font-sans text-[10px] sm:text-xs text-sky-700 uppercase tracking-widest font-bold">Menit</span>
                         </div>
 
                         <!-- Detik -->
-                        <div class="flex-1 flex flex-col items-center justify-center px-1">
+                        <div class="flex-1 flex flex-col items-center justify-center px-2">
                             <span id="countdown-seconds-mid"
-                                class="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-gold-300 leading-none drop-shadow">00</span>
+                                class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-[#1a2b48] leading-none mb-1.5 drop-shadow-2xs">00</span>
                             <span
-                                class="font-sans text-[10px] sm:text-xs text-royal-200 uppercase tracking-widest font-semibold mt-1.5">Detik</span>
+                                class="font-sans text-[10px] sm:text-xs text-sky-700 uppercase tracking-widest font-bold">Detik</span>
                         </div>
                     </div>
+                </div>
+
+                <!-- Action Button: Ingatkan di Kalender -->
+                <div class="mt-5 relative z-10" data-aos="fade-up" data-aos-delay="250">
+                    <button onclick="addToCalendar()"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#4f96e6] via-[#6ba8ed] to-[#4f96e6] hover:from-[#3e8ce0] hover:to-[#5e9fe8] text-white font-sans text-xs font-semibold shadow-md shadow-sky-500/25 hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 border border-sky-200/50">
+                        <i data-lucide="calendar-plus" class="w-4 h-4 text-white"></i>
+                        <span>Ingatkan di Kalender</span>
+                    </button>
                 </div>
             </div>
         </section>
@@ -443,139 +516,138 @@
         <!-- ==================== EVENT / ACARA SECTION ==================== -->
         <section id="event"
             class="py-16 md:py-24 bg-gradient-to-b from-white via-royal-50 to-white relative overflow-hidden">
+            <!-- Subtle Symmetrical Floral Accents -->
+            <div
+                class="absolute -top-6 -left-6 sm:-top-8 sm:-left-8 w-24 h-24 sm:w-36 sm:h-36 pointer-events-none select-none opacity-25 z-0 scale-x-[-1]">
+                <img src="assets/images/bunga.png" alt="" class="w-full h-full object-contain">
+            </div>
+            <div
+                class="absolute -top-6 -right-6 sm:-top-8 sm:-right-8 w-24 h-24 sm:w-36 sm:h-36 pointer-events-none select-none opacity-25 z-0">
+                <img src="assets/images/bunga.png" alt="" class="w-full h-full object-contain">
+            </div>
+
             <div class="max-w-xl mx-auto px-5 relative z-10">
 
-                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl shadow-royal-950/10 border border-royal-100"
+                <div class="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 md:p-9 shadow-2xl shadow-royal-950/10 border border-royal-100 relative overflow-hidden"
                     data-aos="fade-up">
 
                     <!-- Section Title Header -->
-                    <div class="text-center mb-7">
-                        <div class="flex items-center justify-center gap-3">
-                            <span class="text-gold-500 text-xs">✦</span>
-                            <h2 class="font-display text-2xl md:text-3xl font-bold text-royal-900 tracking-wide">
-                                Acara Pernikahan
-                            </h2>
-                            <span class="text-gold-500 text-xs">✦</span>
+                    <div class="text-center mb-6">
+                        <p class="font-script text-3xl sm:text-4xl text-sky-600 mb-1">Rangkaian Acara</p>
+                        <h2 class="font-display text-2xl md:text-3xl font-bold text-[#1a2b48] tracking-wide">
+                            Acara Pernikahan
+                        </h2>
+                        <div class="flex items-center justify-center gap-2.5 my-2.5">
+                            <div class="w-10 h-[1.5px] bg-gradient-to-r from-transparent to-sky-300"></div>
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-sky-500"></i>
+                            <div class="w-10 h-[1.5px] bg-gradient-to-l from-transparent to-sky-300"></div>
                         </div>
-                        <div
-                            class="w-24 h-[1.5px] bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto mt-2">
-                        </div>
+                        <p class="font-body text-base text-slate-600 italic max-w-sm mx-auto">
+                            Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Anda untuk hadir pada hari bahagia kami:
+                        </p>
                     </div>
 
-                    <!-- Vertical List Cards -->
-                    <div class="space-y-3.5 mb-8">
-
-                        <!-- 1. HARI, TANGGAL -->
-                        <div
-                            class="bg-royal-50/50 rounded-2xl p-4 shadow-sm border border-royal-100 flex items-center justify-between gap-4 transition-all hover:shadow-md hover:bg-white">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-12 h-12 rounded-full bg-gradient-to-br from-royal-800 to-royal-950 text-gold-300 flex items-center justify-center flex-shrink-0 shadow-md">
-                                    <i data-lucide="calendar" class="w-5 h-5"></i>
-                                </div>
-                                <div>
-                                    <p class="font-sans text-[11px] font-bold uppercase tracking-wider text-royal-600">
-                                        HARI, TANGGAL</p>
-                                    <p class="font-body text-base md:text-lg font-semibold text-royal-950">Jumat, 8
-                                        Januari 2027</p>
-                                </div>
+                    <!-- Event & Location Unified Card (Rapi, Proporsional & Senada Sky-Blue) -->
+                    <div class="bg-white rounded-3xl p-5 sm:p-7 border border-sky-100 shadow-xl shadow-sky-950/5 mb-6 text-left">
+                        <!-- Top Bar: Status Badge + Date -->
+                        <div class="flex items-center justify-between gap-2 pb-3.5 border-b border-sky-100">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-sans text-xs font-semibold border border-emerald-100">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <span>Akad &amp; Resepsi</span>
+                            </span>
+                            <div class="flex items-center gap-1.5 text-slate-500 font-sans text-xs font-semibold">
+                                <i data-lucide="calendar" class="w-4 h-4 text-sky-500"></i>
+                                <span>8 Jan 2027</span>
                             </div>
-                            <i data-lucide="chevron-right" class="w-5 h-5 text-gold-500 flex-shrink-0"></i>
                         </div>
 
-                        <!-- 2. AKAD NIKAH -->
-                        <div
-                            class="bg-royal-50/50 rounded-2xl p-4 shadow-sm border border-royal-100 flex items-center justify-between gap-4 transition-all hover:shadow-md hover:bg-white">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-12 h-12 rounded-full bg-gradient-to-br from-royal-800 to-royal-950 text-gold-300 flex items-center justify-center flex-shrink-0 shadow-md">
-                                    <i data-lucide="heart-handshake" class="w-5 h-5"></i>
-                                </div>
-                                <div>
-                                    <p class="font-sans text-[11px] font-bold uppercase tracking-wider text-royal-600">
-                                        AKAD NIKAH</p>
-                                    <p class="font-body text-base md:text-lg font-semibold text-royal-950">09.00 - 10.00
-                                        WIB</p>
-                                </div>
-                            </div>
-                            <i data-lucide="chevron-right" class="w-5 h-5 text-gold-500 flex-shrink-0"></i>
+                        <!-- Date Heading with Sky-Blue Vertical Accent Line -->
+                        <div class="border-l-4 border-sky-500 pl-3.5 py-0.5 my-4">
+                            <h3 class="font-display text-xl sm:text-2xl font-bold text-[#1a2b48] tracking-tight">
+                                Jumat, 8 Januari 2027
+                            </h3>
                         </div>
 
-                        <!-- 3. RESEPSI PERNIKAHAN -->
-                        <div
-                            class="bg-royal-50/50 rounded-2xl p-4 shadow-sm border border-royal-100 flex items-center justify-between gap-4 transition-all hover:shadow-md hover:bg-white">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-12 h-12 rounded-full bg-gradient-to-br from-royal-800 to-royal-950 text-gold-300 flex items-center justify-center flex-shrink-0 shadow-md">
-                                    <i data-lucide="sparkles" class="w-5 h-5"></i>
-                                </div>
-                                <div>
-                                    <p class="font-sans text-[11px] font-bold uppercase tracking-wider text-royal-600">
-                                        RESEPSI PERNIKAHAN</p>
-                                    <p class="font-body text-base md:text-lg font-semibold text-royal-950">10.00 - 15.00
-                                        WIB</p>
-                                </div>
-                            </div>
-                            <i data-lucide="chevron-right" class="w-5 h-5 text-gold-500 flex-shrink-0"></i>
-                        </div>
-
-                        <!-- 4. LOKASI ACARA -->
-                        <div
-                            class="bg-royal-50/50 rounded-2xl p-4 shadow-sm border border-royal-100 flex items-center justify-between gap-4 transition-all hover:shadow-md hover:bg-white">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-12 h-12 rounded-full bg-gradient-to-br from-royal-800 to-royal-950 text-gold-300 flex items-center justify-center flex-shrink-0 shadow-md">
-                                    <i data-lucide="map-pin" class="w-5 h-5"></i>
-                                </div>
-                                <div>
-                                    <p class="font-sans text-[11px] font-bold uppercase tracking-wider text-royal-600">
-                                        LOKASI ACARA</p>
-                                    <p class="font-body text-base md:text-lg font-bold text-royal-950">Rumah Ibu Yeni
+                        <!-- Ceremony Time Box (Akad Nikah & Resepsi - Rapi Tanpa Teks Patah) -->
+                        <div class="bg-gradient-to-r from-[#f0f6ff] via-[#f7fbff] to-[#f0f6ff] border border-sky-100 rounded-2xl p-3.5 sm:p-4 mb-4 shadow-2xs">
+                            <div class="grid grid-cols-2 divide-x divide-sky-200/80 text-center">
+                                <div class="px-2">
+                                    <p class="font-sans text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-sky-700 mb-0.5">
+                                        Akad Nikah
                                     </p>
-                                    <p class="font-sans text-xs text-royal-700/80 font-mono">7°18'39.1"S 108°11'05.1"E
+                                    <p class="font-sans text-xs sm:text-sm font-bold text-[#1a2b48] whitespace-nowrap">
+                                        09.00 – 10.00 <span class="text-[10px] sm:text-xs font-medium text-slate-500">WIB</span>
+                                    </p>
+                                </div>
+                                <div class="px-2">
+                                    <p class="font-sans text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-sky-700 mb-0.5">
+                                        Resepsi
+                                    </p>
+                                    <p class="font-sans text-xs sm:text-sm font-bold text-[#1a2b48] whitespace-nowrap">
+                                        10.00 – 15.00 <span class="text-[10px] sm:text-xs font-medium text-slate-500">WIB</span>
                                     </p>
                                 </div>
                             </div>
-                            <i data-lucide="chevron-right" class="w-5 h-5 text-gold-500 flex-shrink-0"></i>
-                        </div>
-                    </div>
-
-                    <!-- Google Maps Embed Container -->
-                    <div class="rounded-2xl overflow-hidden shadow-md border border-royal-100 bg-white">
-                        <div class="relative h-56 md:h-64 w-full">
-                            <iframe src="https://maps.google.com/maps?q=-7.310861,108.184750&hl=id&z=16&output=embed"
-                                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
-                                referrerpolicy="no-referrer-when-downgrade" class="w-full h-full">
-                            </iframe>
-
-                            <!-- Floating Location badge over map -->
-                            <div
-                                class="absolute top-3 left-3 bg-royal-950/85 backdrop-blur-sm text-white px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 shadow-lg border border-gold-400/30">
-                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-gold-400"></i>
-                                <span class="font-sans font-semibold text-[11px]">Rumah Ibu Yeni</span>
-                            </div>
                         </div>
 
-                        <!-- Bottom Map Action Bar in Royal Blue -->
-                        <div
-                            class="p-4 bg-royal-50/60 border-t border-royal-100 flex items-center justify-between gap-3">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <div
-                                    class="w-9 h-9 rounded-xl bg-royal-800 text-gold-300 flex items-center justify-center flex-shrink-0">
-                                    <i data-lucide="navigation-2" class="w-4 h-4"></i>
+                        <!-- Location Detail Box -->
+                        <div class="bg-gradient-to-br from-[#f8fbff] to-[#f0f6ff] border border-sky-100 rounded-2xl p-4 sm:p-5 shadow-2xs">
+                            <div class="flex items-start gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-xl bg-white shadow-xs border border-sky-200/80 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i data-lucide="map-pin" class="w-5 h-5 text-sky-600"></i>
                                 </div>
                                 <div class="min-w-0">
-                                    <p class="font-sans text-xs font-bold text-royal-950 truncate">Rumah Ibu Yeni</p>
-                                    <p class="font-sans text-[11px] text-royal-600 truncate font-mono">7°18'39.1"S
-                                        108°11'05.1"E</p>
+                                    <h4 class="font-display text-base sm:text-lg font-bold text-[#1a2b48] leading-tight">
+                                        Rumah Mempelai Wanita
+                                    </h4>
+                                    <p class="font-sans text-xs text-sky-700 font-semibold mt-0.5">
+                                        Kediaman Bapak Iis
+                                    </p>
                                 </div>
                             </div>
 
+                            <p class="font-sans text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
+                                Pintu masuk Perum Geria Anugrah, Jl. Rancageneng, Sukajaya, Kec. Bungursari, Kota Tasikmalaya, Jawa Barat 46151
+                            </p>
+
+                            <!-- Buttons: Buka Maps & Salin Alamat (Rapi, Sejajar, Tidak Terpotong) -->
+                            <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
+                                <a href="https://www.google.com/maps?q=-7.310861,108.184750" target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="py-2.5 px-2 rounded-xl bg-gradient-to-r from-[#4f96e6] via-[#6ba8ed] to-[#4f96e6] hover:from-[#3e8ce0] hover:to-[#5e9fe8] text-white font-sans text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 shadow-md shadow-sky-500/20 transition-all active:scale-95 whitespace-nowrap">
+                                    <i data-lucide="map" class="w-4 h-4 flex-shrink-0"></i>
+                                    <span>Buka Maps</span>
+                                </a>
+                                <button onclick="copyToClipboard('Pintu masuk Perum Geria Anugrah, Jl. Rancageneng, Sukajaya, Kec. Bungursari, Kota Tasikmalaya, Jawa Barat 46151', this)"
+                                    class="py-2.5 px-2 rounded-xl bg-white hover:bg-sky-50 text-[#1a2b48] font-sans text-xs sm:text-sm font-semibold border border-sky-200/90 flex items-center justify-center gap-1.5 shadow-xs transition-all active:scale-95 whitespace-nowrap">
+                                    <i data-lucide="copy" class="w-4 h-4 text-sky-600 flex-shrink-0"></i>
+                                    <span>Salin Alamat</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Google Maps Live Embed (Tampilan Bersih, Luas & Rapi Senada Tema) -->
+                    <div class="rounded-2xl overflow-hidden shadow-lg shadow-sky-950/8 border border-sky-100 bg-white relative">
+                        <div class="relative h-64 sm:h-72 md:h-80 w-full overflow-hidden">
+                            <iframe src="https://maps.google.com/maps?q=-7.310861,108.184750&hl=id&z=16&output=embed"
+                                width="100%" style="border:0; height: calc(100% + 40px); margin-bottom: -40px;" allowfullscreen="" loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade" class="w-full">
+                            </iframe>
+
+                            <!-- Floating Location Badge (Warna Putih & Sky-Blue Sesuai Tema) -->
+                            <div
+                                class="absolute top-3 left-3 bg-white/95 backdrop-blur-md text-[#1a2b48] px-3.5 py-1.5 rounded-xl text-xs flex items-center gap-2 shadow-md shadow-sky-950/10 border border-sky-200/90 font-sans font-semibold">
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-600 flex-shrink-0"></i>
+                                <span class="text-[11px] sm:text-xs">Rumah Mempelai Wanita</span>
+                            </div>
+
+                            <!-- Floating Quick Action Chip (Buka Google Maps) -->
                             <a href="https://www.google.com/maps?q=-7.310861,108.184750" target="_blank"
                                 rel="noopener noreferrer"
-                                class="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-royal-800 to-royal-900 text-gold-300 font-sans text-xs font-semibold rounded-xl hover:from-royal-700 hover:to-royal-800 transition-all flex-shrink-0 shadow-md border border-gold-400/30 active:scale-95">
+                                class="absolute bottom-3 right-3 bg-white/95 backdrop-blur-md hover:bg-sky-50 text-sky-700 px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-sky-950/10 border border-sky-200/90 font-sans font-bold transition-all active:scale-95">
                                 <span>Buka Google Maps</span>
-                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-gold-400"></i>
+                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-sky-600"></i>
                             </a>
                         </div>
                     </div>
@@ -587,28 +659,24 @@
         <section id="gallery" class="py-16 md:py-24 bg-white relative">
             <div class="max-w-4xl mx-auto px-5">
                 <div class="text-center mb-10" data-aos="fade-up">
-                    <p class="font-script text-3xl text-gold-500 mb-1">Momen Bahagia</p>
-                    <h2 class="font-display text-3xl md:text-4xl font-bold text-royal-900">Galeri Foto</h2>
-                    <div class="w-16 h-[2px] bg-gold-400 mx-auto mt-3"></div>
-                    <p class="font-body text-base text-royal-600 mt-2">Kisah cinta dan keceriaan perjalanan suci kami
+                    <p class="font-script text-3xl text-sky-600 mb-1">Momen Bahagia</p>
+                    <h2 class="font-display text-3xl md:text-4xl font-bold text-[#1a2b48]">Galeri Foto</h2>
+                    <div class="w-16 sm:w-20 h-[1.5px] bg-gradient-to-r from-transparent via-sky-300 to-transparent mx-auto mt-2 mb-3"></div>
+                    <p class="font-body text-base text-slate-600 mt-2">Kisah cinta dan keceriaan perjalanan suci kami
                     </p>
                 </div>
 
-                <!-- 1. Featured Spotlight Photo Card ("Momen Terindah") -->
-                <div class="mb-5 rounded-3xl overflow-hidden shadow-xl border border-royal-100 group relative cursor-pointer"
+                <!-- 1. Featured Spotlight Photo Card -->
+                <div class="mb-5 rounded-3xl overflow-hidden shadow-xl border border-sky-100 group relative cursor-pointer"
                     onclick="openLightbox(0)" data-aos="fade-up">
                     <div class="aspect-[16/10] sm:aspect-[21/9] w-full overflow-hidden relative">
-                        <img src="assets/images/isdul_here.png" alt="Momen Terindah"
+                        <img src="assets/images/isdul_here.png" alt="Rizky & Isla"
                             class="w-full h-full object-cover object-[center_35%] group-hover:scale-105 transition-transform duration-700">
                         <div
                             class="absolute inset-0 bg-gradient-to-t from-royal-950/85 via-transparent to-transparent flex items-end p-5 sm:p-7">
                             <div>
-                                <span
-                                    class="px-3 py-1 bg-royal-800/90 text-gold-300 rounded-full font-sans text-[11px] font-semibold border border-gold-400/30 mb-2 inline-block shadow-sm">
-                                    ★ Momen Terindah
-                                </span>
                                 <h3 class="font-script text-3xl sm:text-4xl text-white drop-shadow">Rizky & Isla</h3>
-                                <p class="font-body text-xs sm:text-sm text-royal-200 italic">"Dua insan yang
+                                <p class="font-body text-xs sm:text-sm text-sky-100 italic">"Dua insan yang
                                     dipersatukan dalam ikatan suci cinta dan takdir."</p>
                             </div>
                         </div>
@@ -697,65 +765,91 @@
 
             <div class="max-w-xl mx-auto px-5 text-center relative z-10">
                 <div class="mb-10" data-aos="fade-up">
-                    <p class="font-script text-3xl text-gold-500 mb-1">Tanda Kasih</p>
-                    <h2 class="font-display text-3xl md:text-4xl font-bold text-royal-900">Amplop Digital</h2>
-                    <div class="w-16 h-[2px] bg-gold-400 mx-auto mt-3"></div>
-                    <p class="font-body text-base text-royal-700 mt-3 leading-relaxed">
+                    <p class="font-script text-3xl text-sky-600 mb-1">Tanda Kasih</p>
+                    <h2 class="font-display text-3xl md:text-4xl font-bold text-[#1a2b48]">Amplop Digital</h2>
+                    <div class="w-16 sm:w-20 h-[1.5px] bg-gradient-to-r from-transparent via-sky-300 to-transparent mx-auto mt-2 mb-3"></div>
+                    <p class="font-body text-base text-slate-600 mt-3 leading-relaxed">
                         Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Namun jika Anda ingin memberikan
                         tanda kasih secara digital, Anda dapat melalui DANA di bawah ini:
                     </p>
                 </div>
 
-                <!-- Interactive Envelope Opening -->
-                <div class="flex justify-center mb-8" data-aos="zoom-in">
-                    <div id="envelope" class="envelope-wrapper cursor-pointer" onclick="openEnvelope()">
-                        <div class="envelope-container">
-                            <div class="envelope-body">
-                                <div class="envelope-flap"></div>
-                                <div class="envelope-letter">
-                                    <div class="letter-content">
-                                        <i data-lucide="heart"
-                                            class="w-7 h-7 text-gold-500 mx-auto mb-1 fill-gold-500"></i>
-                                        <p class="font-script text-2xl text-royal-900">Terima Kasih</p>
-                                        <p class="font-sans text-xs text-royal-600">Rizky & Isla</p>
+                <!-- Luxury Wedding Envelope Container (Interactive Opening Animation) -->
+                <div class="envelope-stage" data-aos="zoom-in" data-aos-delay="150">
+                    <div id="wedding-envelope-element" class="wedding-envelope" onclick="toggleWeddingEnvelope()">
+                        <!-- Envelope Back Plate -->
+                        <div class="envelope-back"></div>
+
+                        <!-- Top Flap (Opens Upwards with 3D Flip) -->
+                        <div class="envelope-top-flap"></div>
+
+                        <!-- Golden 3D Wax Seal with Heart Icon -->
+                        <div class="envelope-wax-seal">
+                            <i data-lucide="heart" class="w-5 h-5 text-amber-900 fill-amber-700/80"></i>
+                        </div>
+
+                        <!-- Inside Pocket Folds (Gives Real Envelope Depth) -->
+                        <div class="envelope-front-pocket"></div>
+
+                        <!-- Card Content (Slides Up out of Envelope when opened) -->
+                        <div class="envelope-card-content" onclick="event.stopPropagation()">
+                            <div class="bg-gradient-to-br from-white via-[#f7fbff] to-[#edf5fd] rounded-3xl p-5 sm:p-7 shadow-2xl shadow-sky-950/15 border border-sky-200/90 text-left relative overflow-hidden">
+                                <!-- Decorative background glow -->
+                                <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-sky-400/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                                <!-- Card Header: Logo DANA + Chip & Contactless -->
+                                <div class="flex items-center justify-between mb-4 sm:mb-5">
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="px-3.5 py-1 bg-[#118EEA] text-white font-sans text-xs font-bold rounded-lg tracking-wider shadow-sm flex items-center gap-1.5">
+                                            <i data-lucide="wallet" class="w-3.5 h-3.5"></i>
+                                            <span>DANA</span>
+                                        </span>
+                                        <span class="font-sans text-xs font-semibold text-slate-700">Dompet Digital</span>
+                                    </div>
+                                    <div class="flex items-center gap-1 text-sky-400/80">
+                                        <i data-lucide="rss" class="w-4 h-4 rotate-90"></i>
                                     </div>
                                 </div>
+
+                                <!-- Card Body: Account Number Box -->
+                                <div class="bg-white/95 backdrop-blur-sm rounded-2xl p-4 sm:p-5 border border-sky-100 shadow-2xs mb-4">
+                                    <p class="font-sans text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                                        Nomor Akun DANA
+                                    </p>
+                                    <span class="font-mono text-xl sm:text-2xl font-bold text-[#1a2b48] tracking-wider block">
+                                        0878 5074 5649
+                                    </span>
+                                    <span class="font-sans text-xs text-sky-800 font-semibold mt-1 block">
+                                        a.n. Isla Nurmila
+                                    </span>
+                                </div>
+
+                                <!-- Button Salin Nomor DANA -->
+                                <button onclick="copyToClipboard('087850745649', this)"
+                                    class="w-full py-3 bg-gradient-to-r from-[#4f96e6] via-[#6ba8ed] to-[#4f96e6] hover:from-[#3e8ce0] hover:to-[#5e9fe8] text-white font-sans text-sm font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 active:scale-98">
+                                    <i data-lucide="copy" class="w-4 h-4"></i>
+                                    <span>Salin Nomor DANA</span>
+                                </button>
+
+                                <!-- Card Footer -->
+                                <div class="mt-4 pt-3 border-t border-sky-100/80 flex items-center justify-between text-xs text-slate-500 font-sans">
+                                    <span class="flex items-center gap-1 text-emerald-600 font-medium">
+                                        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Terverifikasi
+                                    </span>
+                                    <span class="font-script text-base text-sky-700">
+                                        Terima Kasih
+                                    </span>
+                                </div>
                             </div>
-                            <p
-                                class="font-sans text-xs text-royal-700 font-semibold mt-3 envelope-hint flex items-center justify-center gap-1.5">
-                                <i data-lucide="touchpad" class="w-4 h-4 text-gold-500"></i> Klik untuk membuka nomor
-                                DANA
-                            </p>
                         </div>
                     </div>
-                </div>
 
-                <!-- Accounts: DANA Only (Banks removed as requested) -->
-                <div id="gift-accounts" class="hidden max-w-md mx-auto text-left">
-                    <div
-                        class="bg-white rounded-3xl p-6 shadow-xl border-2 border-dana-500/40 relative overflow-hidden">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center gap-2">
-                                <span
-                                    class="px-3 py-1 bg-[#118EEA] text-white font-sans text-xs font-bold rounded-lg tracking-wider shadow-sm">
-                                    DANA
-                                </span>
-                                <span class="font-sans text-xs font-semibold text-royal-900">Dompet Digital DANA</span>
-                            </div>
-                            <span class="font-sans text-xs font-bold text-dana-500">Official</span>
-                        </div>
-
-                        <div class="bg-royal-50/80 rounded-2xl p-4 border border-dana-500/20 mb-4">
-                            <p class="font-sans text-xs text-royal-600 mb-1">Nomor Akun DANA:</p>
-                            <span class="font-mono text-xl font-bold text-royal-950 tracking-wider block">0878 5074
-                                5649</span>
-                            <span class="font-sans text-xs text-royal-700 font-semibold mt-1 block">Isla Nurmila</span>
-                        </div>
-
-                        <button onclick="copyToClipboard('087850745649', this)"
-                            class="w-full py-3 bg-[#118EEA] hover:bg-[#0c74c2] text-white font-sans text-sm font-bold rounded-xl transition-colors flex items-center justify-center gap-2 shadow-md active:scale-98">
-                            <i data-lucide="copy" class="w-4 h-4"></i>
-                            <span>Salin Nomor DANA</span>
+                    <!-- Envelope Interactive Trigger Hint / Toggle Button -->
+                    <div class="mt-6 flex justify-center">
+                        <button onclick="toggleWeddingEnvelope()" id="envelope-toggle-hint"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/90 hover:bg-white text-slate-700 font-sans text-xs font-semibold shadow-md shadow-sky-950/8 border border-sky-200/80 transition-all hover:scale-105 active:scale-95">
+                            <i data-lucide="mail-open" class="w-4 h-4 text-sky-500"></i>
+                            <span>Ketuk untuk Membuka Amplop</span>
                         </button>
                     </div>
                 </div>
@@ -769,11 +863,92 @@
             <div class="max-w-2xl mx-auto px-5 relative z-10">
 
                 <div class="text-center mb-10" data-aos="fade-up">
-                    <p class="font-script text-3xl text-gold-500 mb-1">Doa Restu & Kehadiran</p>
-                    <h2 class="font-display text-3xl md:text-4xl font-bold text-royal-900">Ucapan & RSVP</h2>
-                    <div class="w-16 h-[2px] bg-gold-400 mx-auto mt-3"></div>
+                    <p class="font-script text-3xl text-sky-600 mb-1">Doa Restu & Kehadiran</p>
+                    <h2 class="font-display text-3xl md:text-4xl font-bold text-[#1a2b48]">Ucapan & RSVP</h2>
+                    <div class="w-16 sm:w-20 h-[1.5px] bg-gradient-to-r from-transparent via-sky-300 to-transparent mx-auto mt-2 mb-3"></div>
                     <p class="font-body text-base text-royal-600 mt-2">Kirimkan doa restu dan konfirmasi kehadiran Anda
                         untuk kedua mempelai</p>
+                </div>
+
+                <!-- ==================== E-TICKET & QR CODE PRESENSI ==================== -->
+                <div class="mb-12" data-aos="fade-up">
+                    <div class="bg-white rounded-3xl shadow-xl shadow-sky-950/5 border border-sky-100/80 overflow-hidden relative">
+                        <!-- Top Header Ticket -->
+                        <div class="bg-gradient-to-r from-[#0e2748] via-[#1a3d6d] to-[#0e2748] text-white px-6 py-5 relative overflow-hidden">
+                            <div class="flex items-center justify-between gap-3 relative z-10">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-9 h-9 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 text-sky-300 flex-shrink-0">
+                                        <i data-lucide="qr-code" class="w-5 h-5"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="font-sans text-[10px] sm:text-xs uppercase tracking-widest text-sky-200 font-semibold truncate">E-Ticket & Presensi Tamu</p>
+                                        <h3 class="font-script text-xl sm:text-2xl text-white truncate">The Wedding of Rizky & Isla</h3>
+                                    </div>
+                                </div>
+                                <span class="px-3 py-1 bg-sky-400/20 text-sky-200 rounded-full font-sans text-[11px] font-bold border border-sky-300/30 flex items-center gap-1.5 flex-shrink-0">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span>VIP PASS</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Ticket Perforation Separator (Clean dashed line without weird side notches) -->
+                        <div class="relative py-2 bg-gradient-to-b from-[#f8fbff] to-white flex items-center justify-center px-6">
+                            <div class="w-full border-t border-dashed border-sky-200"></div>
+                        </div>
+
+                        <!-- Ticket Body -->
+                        <div id="ticket-capture-card" class="px-6 pb-8 pt-2 bg-white text-center">
+                            <div class="max-w-md mx-auto flex flex-col items-center">
+                                
+                                <span class="inline-block font-sans text-[10px] tracking-widest uppercase text-sky-700 font-bold bg-sky-50 px-3 py-1 rounded-full border border-sky-200/70 mb-2">
+                                    Undangan Resmi
+                                </span>
+
+                                <h4 id="ticket-guest-name" class="font-display text-2xl sm:text-3xl font-bold text-[#0e2748] tracking-tight my-1 break-words">
+                                    Tamu Terhormat
+                                </h4>
+
+                                <!-- Event Date & Location Pill -->
+                                <div class="mt-1.5 inline-flex items-center justify-center gap-1.5 px-3.5 py-1 rounded-full bg-sky-50/80 border border-sky-200/60 text-xs font-sans text-sky-800">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-sky-600 flex-shrink-0"></i>
+                                    <span class="font-medium">Jumat, 8 Januari 2027 • Gedebage, Bandung</span>
+                                </div>
+
+                                <!-- QR Code Box Container -->
+                                <div class="my-5 p-4 bg-white rounded-2xl shadow-sm border border-sky-100 inline-flex flex-col items-center justify-center">
+                                    <div id="ticket-qrcode" class="flex items-center justify-center min-w-[170px] min-h-[170px]">
+                                        <!-- Rendered by QRCode.js or Fallback -->
+                                    </div>
+                                    <div class="mt-2.5">
+                                        <span id="ticket-code-badge" class="font-mono text-[11px] font-bold text-sky-800 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
+                                            ISDUL-VIP
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <p class="font-sans text-xs text-gray-500 max-w-xs leading-relaxed mb-5">
+                                    Tunjukkan QR Code ini kepada penerima tamu saat tiba di lokasi untuk presensi otomatis.
+                                </p>
+
+                                <!-- Action Buttons -->
+                                <div class="w-full flex flex-col sm:flex-row items-center justify-center gap-2.5">
+                                    <button type="button" onclick="downloadQrTicket()"
+                                        class="w-full sm:w-auto py-2.5 px-5 bg-gradient-to-r from-[#4f96e6] to-[#3b82f6] hover:from-[#3e8ce0] hover:to-[#2563eb] text-white font-sans font-bold text-xs rounded-xl shadow-md shadow-sky-500/20 transition-all flex items-center justify-center gap-2 active:scale-95">
+                                        <i data-lucide="download" class="w-4 h-4"></i>
+                                        <span>Unduh Kartu Tiket</span>
+                                    </button>
+                                    <button type="button" onclick="copyGuestInviteLink()"
+                                        class="w-full sm:w-auto py-2.5 px-5 bg-sky-50 hover:bg-sky-100 text-sky-700 font-sans font-bold text-xs rounded-xl border border-sky-200 transition-all flex items-center justify-center gap-2 active:scale-95 whitespace-nowrap">
+                                        <i data-lucide="share-2" class="w-4 h-4"></i>
+                                        <span>Salin Link Undangan</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    </div>
                 </div>
 
                 <!-- Single Unified Form without "Jumlah Tamu" -->
@@ -829,9 +1004,9 @@
                                     placeholder="Tuliskan ucapan dan doa terbaik Anda untuk kedua mempelai..."></textarea>
                             </div>
 
-                            <!-- 4. Submit Button -->
+                            <!-- 4. Submit Button (Tema Sky Blue Gradient) -->
                             <button type="submit"
-                                class="w-full py-3.5 bg-gradient-to-r from-royal-800 via-royal-700 to-royal-800 text-gold-300 font-sans font-bold rounded-xl shadow-lg shadow-royal-900/20 hover:shadow-xl transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 text-sm tracking-wide border border-gold-400/40">
+                                class="w-full py-3.5 bg-gradient-to-r from-[#4f96e6] via-[#6ba8ed] to-[#4f96e6] hover:from-[#3e8ce0] hover:to-[#5e9fe8] text-white font-sans font-bold rounded-xl shadow-lg shadow-sky-500/25 hover:shadow-xl transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 text-sm tracking-wide border border-sky-300/40">
                                 <i data-lucide="send" class="w-4 h-4"></i>
                                 <span>Kirim Ucapan & Konfirmasi</span>
                             </button>
@@ -859,31 +1034,25 @@
         </section>
 
         <!-- ==================== CLOSING / PENUTUP ==================== -->
-        <section class="py-14 bg-white text-center px-6 relative overflow-hidden">
+        <section class="pt-14 pb-32 sm:pb-36 bg-gradient-to-b from-white via-white to-[#f0f6ff] text-center px-6 relative overflow-hidden">
             <div class="max-w-xl mx-auto relative z-10" data-aos="fade-up">
                 <div class="w-48 sm:w-60 max-w-xs mx-auto mb-5">
                     <img src="assets/images/blue_rose_bg.png" alt="Blue Rose Ornament"
                         class="w-full h-auto object-contain mx-auto mix-blend-multiply">
                 </div>
 
-                <p class="font-body text-lg md:text-xl text-royal-800 leading-relaxed mb-4 font-medium">
+                <p class="font-body text-lg md:text-xl text-[#1a2b48] leading-relaxed mb-4 font-medium">
                     Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir
                     untuk memberikan doa restu kepada kami berdua.
                 </p>
-                <p class="font-sans text-xs text-royal-500 uppercase tracking-widest mb-3">Wassalamu'alaikum
+                <p class="font-sans text-xs text-slate-500 uppercase tracking-widest mb-3">Wassalamu'alaikum
                     Warahmatullahi Wabarakatuh</p>
-                <h3 class="font-script text-4xl md:text-5xl text-royal-900 mb-2">Rizky & Isla</h3>
-                <p class="font-sans text-xs text-royal-600 font-medium">Rizky Abdul Azis & Isla Nurmila</p>
+                <h3 class="font-script text-4xl md:text-5xl text-[#3b82f6] mb-2 drop-shadow-2xs">Rizky & Isla</h3>
+                <p class="font-sans text-xs text-[#1a2b48] font-bold tracking-wide">Rizky Abdul Azis & Isla Nurmila</p>
+                
+                <p class="text-[10px] text-slate-400 font-medium tracking-wider uppercase mt-8">Created by. Infix</p>
             </div>
         </section>
-
-        <!-- ==================== FOOTER (All Deep Blue, No White) ==================== -->
-        <footer class="pt-10 pb-36 bg-royal-950 text-white/70 text-center font-sans text-xs">
-            <p class="font-script text-3xl text-gold-400 mb-1">Rizky & Isla</p>
-            <p class="font-sans text-xs text-white/90 font-medium">Rizky Abdul Azis & Isla Nurmila</p>
-            <p class="text-[11px] text-white/60 mt-1">Jumat, 8 Januari 2027</p>
-            <p class="text-[10px] text-white/30 mt-4">Created by. Infix</p>
-        </footer>
     </main>
 
     <!-- ==================== FIXED MOBILE BOTTOM NAVIGATION BAR ==================== -->
