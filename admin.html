@@ -1552,9 +1552,9 @@ _Assalamu’alaikum Warahmatullahi Wabarakatuh_
 
 Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri hari bahagia kami:
 
-*Pernikahan Rudi & Yolla*
-Hari/Tanggal: *Jumat, 27 November 2026*
-Lokasi: *Rancageneng 2, Kota Tasikmalaya*
+*Pernikahan Rizky & Isla*
+Hari/Tanggal: *Jumat, 8 Januari 2027*
+Lokasi: *Kediaman Bapak Iis, Jl. Rancageneng, Kota Tasikmalaya*
 
 Tautan undangan resmi & konfirmasi kehadiran:
 [LINK]
@@ -1565,7 +1565,7 @@ Terima kasih.
 _Wassalamu’alaikum Warahmatullahi Wabarakatuh_
 
 Salam hangat,
-*Rudi & Yolla*`;
+*Rizky & Isla*`;
 
     let guests = [];
     let latestGuest = null;
@@ -1638,7 +1638,10 @@ Salam hangat,
 
     function getWaTemplate() {
         const stored = localStorage.getItem('wedding_wa_template');
-        return stored || DEFAULT_WA_TEMPLATE;
+        if (stored && !stored.includes('Rudi & Yolla')) {
+            return stored;
+        }
+        return DEFAULT_WA_TEMPLATE;
     }
 
     function toggleWaTemplateSettings() {
