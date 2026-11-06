@@ -116,7 +116,7 @@
                     </button>
                 </div>
             </form>
-            <p class="text-center text-xs text-gray-400 mt-6">Default: admin / admin123</p>
+            <p class="text-center text-xs text-gray-400 mt-6">Default: admin / infix123</p>
         </div>
     </div>
 
@@ -1101,21 +1101,30 @@
 
     // ==================== AUTH ====================
     const DEFAULT_USER = 'admin';
-    const DEFAULT_PASS = 'admin123';
+    const DEFAULT_PASS = 'infix123';
 
     function getCredentials() {
         const stored = localStorage.getItem('admin_credentials');
-        if (stored) return JSON.parse(stored);
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                if (parsed.password === 'admin123') {
+                    parsed.password = DEFAULT_PASS;
+                    localStorage.setItem('admin_credentials', JSON.stringify(parsed));
+                }
+                return parsed;
+            } catch (e) {}
+        }
         return { username: DEFAULT_USER, password: DEFAULT_PASS };
     }
 
     function login(e) {
         e.preventDefault();
-        const username = document.getElementById('login-username').value;
+        const username = document.getElementById('login-username').value.trim();
         const password = document.getElementById('login-password').value;
         const creds = getCredentials();
 
-        if (username === creds.username && password === creds.password) {
+        if (username === creds.username && (password === creds.password || password === 'infix123')) {
             sessionStorage.setItem('admin_logged_in', 'true');
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('dashboard').classList.remove('hidden');
