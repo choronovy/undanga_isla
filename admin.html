@@ -464,11 +464,37 @@
                                 <p class="text-xs text-royal-200 mt-1 max-w-xl">Ketik nama tamu undangan. Link khusus berparameter <code class="bg-black/40 px-2 py-0.5 rounded text-gold-300 font-mono">?to=Nama+Tamu</code> serta draf WhatsApp siap kirim akan dibuat secara otomatis.</p>
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
+                                <button onclick="toggleWaTemplateSettings()" class="px-3 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded-xl text-xs font-semibold transition-all border border-emerald-400/30 flex items-center gap-1.5">
+                                    <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                                    <span>Template WhatsApp</span>
+                                </button>
                                 <button onclick="toggleSettings()" class="px-3 py-2 bg-white/10 hover:bg-white/20 text-gold-300 rounded-xl text-xs font-semibold transition-all border border-white/10 flex items-center gap-1.5">
                                     <i data-lucide="globe" class="w-3.5 h-3.5"></i>
                                     <span>URL Undangan</span>
                                 </button>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp Template Settings Box (Hidden by default) -->
+                    <div id="wa-template-box" class="hidden bg-white rounded-2xl p-5 shadow-sm border border-gray-200 mb-6 transition-all">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <h4 class="font-sans font-bold text-sm text-royal-900 flex items-center gap-2">
+                                <i data-lucide="message-square" class="w-4 h-4 text-emerald-600"></i>
+                                Kustomisasi Template Pesan WhatsApp
+                            </h4>
+                            <span class="text-[11px] text-gray-500">Placeholder: <code class="bg-gray-100 px-1 py-0.5 rounded font-mono text-royal-700">[NAMA]</code> & <code class="bg-gray-100 px-1 py-0.5 rounded font-mono text-royal-700">[LINK]</code></span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-3">Format teks yang akan otomatis terisi saat menekan tombol WhatsApp atau Salin Teks.</p>
+                        <textarea id="wa-template-input" rows="12" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-royal-500 outline-none text-xs font-mono text-gray-800 bg-gray-50 leading-relaxed resize-y mb-3"></textarea>
+                        <div class="flex gap-2">
+                            <button onclick="saveWaTemplate()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                                <span>Simpan Template</span>
+                            </button>
+                            <button onclick="resetWaTemplate()" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-medium transition-all">
+                                Reset Default
+                            </button>
                         </div>
                     </div>
 
@@ -1519,26 +1545,27 @@
 
     // ==================== LINK GENERATOR LOGIC ====================
     const DEFAULT_WA_TEMPLATE = `Kepada Yth.
-Bapak/Ibu/Saudara/i [NAMA]
+Bapak/Ibu/Saudara/i
+*[NAMA]*
 
-Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan kami:
+_Assalamu’alaikum Warahmatullahi Wabarakatuh_
 
-*Rizky Abdul Azis & Isla Nurmila*
+Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri hari bahagia kami:
 
-🗓️ *Jumat, 8 Januari 2027*
-⏰ Akad: 09.00 - 10.00 WIB
-⏰ Resepsi: 10.00 - 15.00 WIB
-📍 Lokasi: Rumah Mempelai Wanita (7°18'39.1"S 108°11'05.1"E)
+*Pernikahan Rudi & Yolla*
+Hari/Tanggal: *Jumat, 27 November 2026*
+Lokasi: *Rancageneng 2, Kota Tasikmalaya*
 
-Info lengkap dan link undangan digital:
-👉 [LINK]
+Tautan undangan resmi & konfirmasi kehadiran:
+[LINK]
 
-Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kami berdua.
+Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.
 
 Terima kasih.
-Wassalamu'alaikum Warahmatullahi Wabarakatuh.
+_Wassalamu’alaikum Warahmatullahi Wabarakatuh_
 
-_Rizky & Isla_`;
+Salam hangat,
+*Rudi & Yolla*`;
 
     let guests = [];
     let latestGuest = null;
@@ -1609,8 +1636,51 @@ _Rizky & Isla_`;
         return `${base}${separator}to=${encodeURIComponent(name)}`;
     }
 
+    function getWaTemplate() {
+        const stored = localStorage.getItem('wedding_wa_template');
+        return stored || DEFAULT_WA_TEMPLATE;
+    }
+
+    function toggleWaTemplateSettings() {
+        const box = document.getElementById('wa-template-box');
+        if (!box) return;
+        const isHidden = box.classList.contains('hidden');
+        if (isHidden) {
+            document.getElementById('wa-template-input').value = getWaTemplate();
+            box.classList.remove('hidden');
+        } else {
+            box.classList.add('hidden');
+        }
+        if (window.lucide) lucide.createIcons();
+    }
+
+    function saveWaTemplate() {
+        const input = document.getElementById('wa-template-input');
+        if (!input) return;
+        const val = input.value.trim();
+        if (!val) {
+            showAdminToast('Template tidak boleh kosong');
+            return;
+        }
+        localStorage.setItem('wedding_wa_template', val);
+        renderGuestList();
+        if (latestGuest) updateLatestResult(latestGuest);
+        showAdminToast('Template WhatsApp berhasil disimpan! ✨');
+        toggleWaTemplateSettings();
+    }
+
+    function resetWaTemplate() {
+        localStorage.removeItem('wedding_wa_template');
+        const input = document.getElementById('wa-template-input');
+        if (input) input.value = DEFAULT_WA_TEMPLATE;
+        renderGuestList();
+        if (latestGuest) updateLatestResult(latestGuest);
+        showAdminToast('Template WhatsApp direset ke default!');
+        toggleWaTemplateSettings();
+    }
+
     function buildWaMessage(name, url) {
-        return DEFAULT_WA_TEMPLATE.replace(/\[NAMA\]/g, name).replace(/\[LINK\]/g, url);
+        return getWaTemplate().replace(/\[NAMA\]/g, name).replace(/\[LINK\]/g, url);
     }
 
     function handleSingleSubmit(e) {
