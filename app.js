@@ -271,7 +271,7 @@ function updateMusicIcon(playing) {
 // ==================== COUNTDOWN ====================
 
 function startCountdown() {
-    const weddingDate = new Date('2027-01-08T09:00:00+07:00').getTime();
+    const weddingDate = new Date('2027-01-07T09:00:00+07:00').getTime();
     
     function update() {
         const now = new Date().getTime();
@@ -613,8 +613,8 @@ function addToCalendar() {
     const title = encodeURIComponent('Pernikahan Rizky Abdul Azis & Isla Nurmila');
     const details = encodeURIComponent('Pernikahan Rizky Abdul Azis & Isla Nurmila. Akad Nikah: 09.00 - 10.00 WIB. Resepsi: 10.00 - 15.00 WIB.');
     const location = encodeURIComponent('Rumah Mempelai Wanita (7°18\'39.1"S 108°11\'05.1"E)');
-    const start = '20270108T020000Z';
-    const end = '20270108T080000Z';
+    const start = '20270107T020000Z';
+    const end = '20270107T080000Z';
     
     const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}&location=${location}`;
     window.open(url, '_blank');
@@ -752,7 +752,7 @@ function initGuestQrCode(name) {
         app: 'undangan-isdul',
         name: safeName,
         code: currentTicketCode,
-        date: '2027-01-08'
+        date: '2027-01-07'
     });
 
     if (window.QRCode) {
@@ -849,7 +849,7 @@ function downloadQrTicket() {
 
     ctx.fillStyle = '#d5e6fa';
     ctx.font = '14px sans-serif';
-    ctx.fillText('Jumat, 8 Januari 2027 • Gedebage, Bandung', 42, 155);
+    ctx.fillText('Kamis, 7 Januari 2027 • Gedebage, Bandung', 42, 155);
 
     // Separator line (Dashed)
     ctx.setLineDash([8, 8]);
